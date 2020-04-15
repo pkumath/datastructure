@@ -127,7 +127,7 @@ python3 main.py
 ![Alt text](/screenshots/manual.png)
 
 需要注意的是,还没有加入inkscape的自动保存机制,所以在编辑完svg后要手动保存成pdf+tex格式,否则latex不会识别你的图片. 
-![Alt text](/screenshots/save_manual.png)
+![Alt text](/screenshots/save_manual.jpg)
 
 ## 遗留的问题和建议
 
