@@ -1,0 +1,13 @@
+\usepackage{import}
+\usepackage{float}
+\usepackage{pdfpages}
+%\usepackage{transparent}
+\usepackage{xcolor}
+
+\newcommand{\incfig}[1]{%
+    \def\svgwidth{\columnwidth}
+    \import{./figures/}{#1.pdf_tex}
+}
+%\pdfsuppresswarningpagegroup=1
+在中文的ctex被xelatex编译的环境下注释掉的项会出错;但是如果你使用pdflatex可以加上.
+程序会自动给你创建(如果没有的话)图片存放目录figures.
