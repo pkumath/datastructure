@@ -38,7 +38,8 @@ pip install -r requirements.txt
 文件结构应该是这样的:
 ```
 project/
-		__pycache__
+
+    __pycache__
     template
     dependency
     figures
