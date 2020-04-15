@@ -1,4 +1,4 @@
-# LaTex代码模版管理器1.0(仅支持图片).
+# LaTex代码模版管理器1.0(仅支持图片).[数据结构与算法,wg,wyx]
 
 这是一个初步的版本,仅有支持图片的代码段管理功能.
 手边没有Windows机器参考,我修改了初始的思路,原因见最后:**‌遗留的问题和建议**
@@ -122,8 +122,12 @@ inkscape
 ```
 python3 main.py
 ```
-就可以运行程序了.
+就可以运行程序了.见图.
+
+![Alt text](https://github.com/weiman152/StarsView/blob/master/ScreenShots/1.png)
+
 需要注意的是,还没有加入inkscape的自动保存机制,所以在编辑完svg后要手动保存成pdf+tex格式,否则latex不会识别你的图片. 
+![Alt text](https://github.com/weiman152/StarsView/blob/master/ScreenShots/1.png)
 
 ## 遗留的问题和建议
 
