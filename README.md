@@ -124,10 +124,10 @@ python3 main.py
 ```
 就可以运行程序了.见图.
 
-![Alt text](https://github.com/weiman152/StarsView/blob/master/ScreenShots/1.png)
+![Alt text](/screenshots/manual.png)
 
 需要注意的是,还没有加入inkscape的自动保存机制,所以在编辑完svg后要手动保存成pdf+tex格式,否则latex不会识别你的图片. 
-![Alt text](https://github.com/weiman152/StarsView/blob/master/ScreenShots/1.png)
+![Alt text](/screenshots/save_manual.png)
 
 ## 遗留的问题和建议
 
