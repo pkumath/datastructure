@@ -1,0 +1,6 @@
+\begin{figure}[ht]
+    \centering
+    \incfig{键入图片标题...}
+    \caption{键入图片标题...}
+    \label{fig:键入图片标题...}
+\end{figure}
