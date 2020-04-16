@@ -9,7 +9,7 @@ from appdirs import user_config_dir
 
 user_dir = Path(user_config_dir("project", "ww"))
 if not user_dir.is_dir():
-    user_dir.mkdir()
+    user_dir.mkdir(parents=True)
 
 roots_file =  user_dir / 'roots'
 template = user_dir / 'template.svg'
