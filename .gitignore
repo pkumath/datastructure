@@ -146,6 +146,7 @@ static
 
 ### VisualStudioCode ###
 .vscode/*
+.vscode
 
 ### Xcode ###
 xcuserdata/
