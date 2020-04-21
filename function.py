@@ -154,10 +154,10 @@ def menucallback(command,widget,var,varr):
     """
     if command == 'about':
         messagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.')
-    if command == 'hint':
+    elif command == 'hint':
         messagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
-    if command == 'save':
+    elif command == 'save':
         widget.save_file_as(None,varr)
-    if command == 'open':
+    elif command == 'open':
         widget.open_file(None,None,var,varr)
 
