@@ -124,7 +124,12 @@ def callback(widget,var,varr,ttl):
     """控制按钮触发"""
     print(ttl.entry.get())
     var.set(ttl.entry.get())
-    title = beautify(var.get())
+
+    title = var.get()
+    title = valid(title)
+    if title == "": return
+
+    title = beautify(title)
     # text.myvar.set(latex_template(var.get(),title))
     widget.text.delete('1.0','end')
     widget.text.insert('1.0',latex_template(var.get(),title))
@@ -146,6 +151,12 @@ def latex_template(name, title):
 
 def beautify(name):
     return name.replace('_', ' ').replace('-', ' ').title()
+
+def valid(name):
+    invalidChar = r'<>/\|:"}{[]()*?.'
+    validify = str.maketrans(dict(zip(invalidChar, ('',)*len(invalidChar))))
+    name = name.translate(validify) #remove some illegal characters
+    return name
 
 def menucallback(command,widget,var,varr):
     """menucallback

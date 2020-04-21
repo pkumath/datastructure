@@ -3,6 +3,7 @@
 
 import os
 import subprocess
+from function import valid
 from pathlib import Path
 from shutil import copy
 from appdirs import user_config_dir
@@ -51,6 +52,10 @@ def create(title, root):
 
     """
     title = title.strip()
+
+    title = valid(title)
+    if title == "": return
+
     file_name = title.replace(' ', '-').lower() + '.svg'
     figures = Path(root).absolute()/'figures'
     if not figures.exists():
