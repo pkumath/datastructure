@@ -79,12 +79,15 @@ class clicktext(tk.Frame):
         """
         self.filename = filedialog.asksaveasfilename(filetypes = [
         ('Text', '*.txt'),
-            ('All files', '*'),
             ])
-        f = open(self.filename, 'w')
-        f.write(varr.get() + '\n' + self.text.get('1.0', 'end'))
-        f.close()
-        messagebox.showinfo('Good Output!', 'File Saved')
+        
+        if not (self.filename == ''):
+            if self.filename[-4:] != ".txt": self.filename += ".txt"
+            with open(self.filename, 'w') as f:
+                f.write(varr.get() + '\n' + self.text.get('1.0', 'end'))
+            messagebox.showinfo('Good Output!', 'File Saved')
+        else: print("save cancelled.")
+        #! 末尾有多余换行
 
     def open_file(self, whatever = None, filename = None,var= None,varr = None):
         """open_file
@@ -101,11 +104,10 @@ class clicktext(tk.Frame):
         else:
             self.filename = filename
         if not (self.filename == ''):
-            f = open(self.filename, 'r')
-            f2 = f.read()
-            self.text.delete('1.0', 'end')
-            self.text.insert('1.0', f2)
-            f.close()
+            with open(self.filename, 'r') as f:
+                f2 = f.read()
+                self.text.delete('1.0', 'end')
+                self.text.insert('1.0', f2)
             var.set(self.filename)
             varr.set('经过处理的模版:'+(var.get().split(os.path.sep))[-1])
             if self.usek == True:
