@@ -3,6 +3,7 @@
 
 import os
 import subprocess
+from multiprocessing import Process
 from function import valid
 from pathlib import Path
 from shutil import copy
@@ -22,7 +23,10 @@ if not template.is_file():
     copy(source, destination)
 
 def inkscape(path):
-    subprocess.Popen(['inkscape', str(path)])
+    processOpen = subprocess.Popen(['inkscape', str(path)])
+    processOpen.wait()
+    subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
+    print("finished!")
 
 def create(title, root):
 #     """
@@ -57,16 +61,20 @@ def create(title, root):
     if title == "": return
 
     file_name = title.replace(' ', '-').lower() + '.svg'
-    figures = Path(root).absolute()/'figures'
+    figures = Path(root).absolute()/'figures' # TODO: Custom folder(workspace)
     if not figures.exists():
         figures.mkdir()
 
     figure_path = figures / file_name
 
     # If a file with this name already exists, append a '2'.
-    if figure_path.exists():
+    if figure_path.exists(): #TODO: Add the option to reopen
         print(title + ' 2')
         return
-    copy(str(template), str(figure_path))
-    inkscape(figure_path)
+    else:
+        copy(str(template), str(figure_path))
+    
+    inkscapeProcess = Process(target=inkscape ,args=(figure_path,))
+    inkscapeProcess.start()
+    print("processStarted")
 
