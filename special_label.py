@@ -42,11 +42,11 @@ class clickentry(tk.Frame):
             event.widget.delete(0,tk.END)
         k += 1
 
-def callback(operater):
-    """callback
+""" def callback(operater):
+    #callback
 
-    :param operater:str for control
-    """
+    #:param operater:str for control
+    #
     global k
     if operater != '=' and operater != 'CA':
         if k == 0:
@@ -65,7 +65,7 @@ def callback(operater):
         expression.entry.delete(0,tk.END)
         expression.entry.insert(0,temp)
     else:
-        expression.entry.delete(0,tk.END)
+        expression.entry.delete(0,tk.END) """
     
 
 
