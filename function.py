@@ -10,6 +10,8 @@ import pyautogui as pya
 import pyperclip
 import time
 import keyboard as kd
+import paste as autopaste
+
 
 ce = importlib.import_module('special_label')
 
@@ -150,7 +152,20 @@ def latex_template(name, title):
         r"\end{figure}"))
 
 def beautify(name):
-    return name.replace('_', ' ').replace('-', ' ').title()
+    t = name
+    try:
+        if name[0].islower():
+            t = name[0].upper() + name[1:]
+    except:
+        pass
+    t =t.replace('_', ' ').replace('-', ' ')
+    return t
+
+def valid(name):
+    invalidChar = r'<>/\|:"}{[]()*?.'
+    validify = str.maketrans(dict(zip(invalidChar, ('',)*len(invalidChar))))
+    name = name.translate(validify) #remove some illegal characters
+    return name
 
 def valid(name):
     invalidChar = r'<>/\|:"}{[]()*?.'

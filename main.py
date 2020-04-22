@@ -10,9 +10,11 @@ import pyautogui as pya
 import pyperclip
 import time
 import sys
-import keyboard as kd
+#import keyboard as kd
 from inkscape_control import *
 from function import *
+import threading
+import paste as autopaste
 
 
 # def myglobal(value):
@@ -25,11 +27,17 @@ from function import *
 
 ce = importlib.import_module('special_label')
 
+# def thread1():
+    # root.mainloop()
+
+def thread2():
+    autopaste.trigger()
+
 if __name__ == '__main__':
     # 路径处理
     # TODO 引入工作区机制
     figpath = os.path.split(os.path.realpath(__file__))[0]
-    print(figpath)
+    print('main.py',figpath)
     save_dir = "figures"+os.path.sep
     if os.path.exists(save_dir) is False:
         os.makedirs(save_dir)
@@ -97,5 +105,13 @@ if __name__ == '__main__':
 
     root.config(menu=menubar)
 #    menu = tk.Menu(root,tearoff = False)
+    threads = []
 
+    t2 = threading.Thread(target=thread2,args=())
+    threads.append(t2)
+    for t in threads:
+        t.start()
+    
     tk.mainloop()
+
+
