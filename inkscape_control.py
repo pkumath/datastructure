@@ -3,7 +3,7 @@
 
 import os
 import subprocess
-from multiprocessing import Process
+import threading
 from function import valid
 from pathlib import Path
 from shutil import copy
@@ -61,6 +61,7 @@ def create(title, root):
     if title == "": return
 
     file_name = title.replace(' ', '-').lower() + '.svg'
+
     figures = Path(root).absolute()/'figures' # TODO: Custom folder(workspace)
     if not figures.exists():
         figures.mkdir()
@@ -68,13 +69,14 @@ def create(title, root):
     figure_path = figures / file_name
 
     # If a file with this name already exists, append a '2'.
-    if figure_path.exists(): #TODO: Add the option to reopen
+    if figure_path.exists():
+        #TODO: Add the option to reopen
         print(title + ' 2')
         return
     else:
         copy(str(template), str(figure_path))
     
-    inkscapeProcess = Process(target=inkscape ,args=(figure_path,))
-    inkscapeProcess.start()
-    print("processStarted")
-
+    inkscapeThread = threading.Thread(target=inkscape, args=(figure_path,), name="Inkscape")
+    inkscapeThread.start()
+    print("inkscape thread started")
+    return
