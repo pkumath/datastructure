@@ -1,84 +1,81 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pyperclip as pp
+import pyperclip as pyperclip
 import time
-import function as ftn
-import inkscape_control as ink
+from function import latex_template
+
 import os
-from platform import system
 
-if system() == "Darwin":
+import logging as log
+
+from globe import Globe as globe
+import inkscape_control
+from util import StrUtil as strutil
+SYSTEM = globe.SYSTEM
+
+
+if SYSTEM == "Darwin":
     from pynput import keyboard
-
-elif system() == "Windows":
+elif SYSTEM == "Windows":
     import keyboard
 
 def on_activate():
-    global name
-    global title
-    print('Global hotkey activated!')
+    log.info('Global hotkey activated')
 
     
-    if system() == "Darwin":
-        ky = keyboard.Controller()
-        with ky.pressed(keyboard.Key.ctrl):
-            ky.press('c')
-            ky.release('c')
-    elif system() == "Windows":
+    if SYSTEM == "Darwin":
+        keyboard_controller = keyboard.Controller()
+        with keyboard_controller.pressed(keyboard.Key.ctrl):
+            keyboard_controller.press('c')
+            keyboard_controller.release('c')
+    elif SYSTEM == "Windows":
         keyboard.send('ctrl+c')
     else: return   
 
     time.sleep(0.5)
 
-    clip = pp.paste()
-    name = clip
+    variable = pyperclip.paste()
 
-    name = ftn.valid(name)
-    title = ftn.valid(name)
-    if title == "": return
-    title = ftn.beautify(title)
-
+    label = strutil.label(variable)
+    caption = strutil.caption(variable)
+    if label == "": return
     
-    manage_string = ftn.latex_template(name, title)
-    pp.copy(manage_string)
+    manage_string = latex_template(label, caption)
+    pyperclip.copy(manage_string)
 
     time.sleep(0.5)
 
-    if system() == "Darwin":
-        with ky.pressed(keyboard.Key.ctrl):
-            ky.press('v')
-            ky.release('v')
-    elif system() == "Windows":
+    if SYSTEM == "Darwin":
+        with keyboard_controller.pressed(keyboard.Key.ctrl):
+            keyboard_controller.press('v')
+            keyboard_controller.release('v')
+    elif SYSTEM == "Windows":
         keyboard.send('ctrl+v')
 
     figpath = os.path.split(os.path.realpath(__file__))[0]
     time.sleep(0.5)
 
-    if system() == "Darwin": pp.copy('')
+    if SYSTEM == "Darwin": pyperclip.copy('')
 
-    ink.create(title,figpath)
-
-if system() == "Darwin":
-    def for_canonical(f):
-        print("for_canonical")
-        return lambda k: f(l.canonical(k))
-
-    hotkey = keyboard.HotKey(
-        keyboard.HotKey.parse('<ctrl>+u'),
-        on_activate)
+    inkscape_control.create(variable,figpath)
+    log.info('Global hotkey function terminated')
 
 def trigger():
-    global name
-    global title
+    if SYSTEM == "Darwin":
+        def for_canonical(f):
+            log.info("for_canonical")
+            return lambda k: f(l.canonical(k))
 
-    if system() == "Darwin":
-        global l
+        hotkey = keyboard.HotKey(
+            keyboard.HotKey.parse('<ctrl>+u'),
+            on_activate)
+        
         l = keyboard.Listener(
                 on_press=for_canonical(hotkey.press), 
                 on_release=for_canonical(hotkey.release),
                 #suppress=True
                 )
         l.start()
-    elif system() == "Windows":
+    elif SYSTEM == "Windows":
         keyboard.add_hotkey('ctrl+u', on_activate,)# suppress=True)

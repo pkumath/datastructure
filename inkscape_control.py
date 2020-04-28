@@ -4,10 +4,14 @@
 import os
 import subprocess
 import threading
-from function import valid
 from pathlib import Path
 from shutil import copy
 from appdirs import user_config_dir
+
+import logging as log
+
+from globe import Globe as globe
+from util import StrUtil as strutil
 
 user_dir = Path(user_config_dir("project", "ww"))
 if not user_dir.is_dir():
@@ -23,10 +27,16 @@ if not template.is_file():
     copy(source, destination)
 
 def inkscape(path):
+    log.info("InkscapeThread started")
+
     processOpen = subprocess.Popen(['inkscape', str(path)])
+    log.info("Opening file")
+
     processOpen.wait()
+    log.info("Inkscape process terminated")
+
     subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
-    print("finished!")
+    log.info("Export to pdf_tex process and InkscapeThread terminated")
 
 def create(title, root):
 #     """
@@ -55,28 +65,29 @@ def create(title, root):
     Second argument is the figure directory.
 
     """
-    title = title.strip()
 
-    title = valid(title)
-    if title == "": return
+    log.debug("Title " + title)
+    title = strutil.fileName(title)
+    file_name = title + '.svg'
+    log.debug("File name " + file_name)
 
-    file_name = title.replace(' ', '-').lower() + '.svg'
-
-    figures = Path(root).absolute()/'figures' # TODO: Custom folder(workspace)
+    figures = Path(root).absolute()/'figures' # TODO: 自定义文件夹
     if not figures.exists():
         figures.mkdir()
 
     figure_path = figures / file_name
 
-    # If a file with this name already exists, append a '2'.
+    # If a file with this name already exists, quit
+    #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里
     if figure_path.exists():
-        #TODO: Add the option to reopen
-        print(title + ' 2')
-        return
+        log.warning("{} already exists. Quit.".format(str(figure_path)))
+        return 
     else:
         copy(str(template), str(figure_path))
     
-    inkscapeThread = threading.Thread(target=inkscape, args=(figure_path,), name="Inkscape")
-    inkscapeThread.start()
-    print("inkscape thread started")
+    log.info("Template copied")
+    inkscape_thread = threading.Thread(target=inkscape, args=(figure_path,), name="InkscapeThread")
+    inkscape_thread.setDaemon(True)
+    inkscape_thread.start()
+    log.info("Starting InkscapeThread")
     return
