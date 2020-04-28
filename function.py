@@ -167,12 +167,6 @@ def valid(name):
     name = name.translate(validify) #remove some illegal characters
     return name
 
-def valid(name):
-    invalidChar = r'<>/\|:"}{[]()*?.'
-    validify = str.maketrans(dict(zip(invalidChar, ('',)*len(invalidChar))))
-    name = name.translate(validify) #remove some illegal characters
-    return name
-
 def menucallback(command,widget,var,varr):
     """menucallback
 
