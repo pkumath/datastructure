@@ -3,6 +3,7 @@
 
 import tkinter as tk
 import os
+from globe import Globe as globe
 
 class HintEntry(tk.Frame):
     """HintEntry
@@ -106,7 +107,7 @@ class HintText(tk.Frame):
         """
         self.filename = tk.filedialog.asksaveasfilename(filetypes = [
         ('Text', '*.txt'),
-            ])
+            ],)
         
         if not (self.filename == ''):
             if self.filename[-4:] != ".txt": self.filename += ".txt"
