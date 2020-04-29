@@ -1,6 +1,9 @@
 import tkinter as tk
+from tkinter import filedialog as tkfiledialog
+from tkinter import messagebox as tkmessagebox
 import pyperclip
 import threading
+import os #!TEMP
 
 import logging as log
 
@@ -27,28 +30,29 @@ def init():
     varr_snippet.set('经过处理的图片题目:'+var_snippet.get())
 
     # Hint
+    hint_variable = '图片标题'
     hint_snippet = ' 提示:这是一个自制的简易LaTeX模版生成程序,我们将持续加入其他模版作为扩展,这是在macOS下制作的,我本人不是很清楚Menu组件和Windows显示的是否一致.\n众所周知的是,原来课本上的menu写法只在Windows上生效,因为Mac里的menu是显示在屏幕最上方而不是窗口里面的.\n如果您没有成功显示,换一个电脑,或者忽略格式错误.\n'+\
 '**********************************************************************************\n下方浅黄色区域时就是您的工作区域.\n请输入...'
     hint_dependency = '这里是上面模版所需的LaTeX依赖展示区.是需要被放入导言区的内容.'
 
     # Field
-    field_variable = widget.HintEntry(root,0,0,'键入图片标题...') 
+    field_variable = widget.HintEntry(root,0,0,hint_variable) 
     field_variable.place(relx = 0.5,rely = 0.05, anchor = tk.CENTER)
 
     field_snippet = widget.HintText(root,0,0,hint_snippet,80,40) 
     field_snippet.place(relheight = 0.4, relwidth = 1, rely = 0.15)
 
-    field_dependency = widget.HintText(root,0,0,hint_dependency,80,40, useHint = False)
+    field_dependency = widget.HintText(root,0,0,hint_dependency,80,40)# useHint = False)
     field_dependency.place(relheight = 0.4, relwidth = 1, rely = 0.55)
 
-    #Label
+    # Label
 
     label_variable = tk.Label(root, textvariable = varr_snippet) 
     label_variable.place(relx = 0.5, rely = 0.1,anchor = tk.CENTER)
 
     # Button
 
-    btn_generate = tk.Button(root, text = '生成LaTeX图片模版并复制',command = lambda : callback(field_snippet, var_snippet,varr_snippet,field_variable)) #button: generate snippet from title
+    btn_generate = tk.Button(root, text = '生成LaTeX图片模版并复制',command = lambda : callback(field_snippet, var_snippet,varr_snippet,field_variable))
     btn_generate.place(relx = 0.7, rely = 0.04) 
 
     btn_clrsnip = tk.Button(root, text = '清空片段',command = lambda : field_snippet.clear())#button: clear snippet
@@ -57,18 +61,20 @@ def init():
     btn_clrdep = tk.Button(root, text = '清空依赖区',command = lambda : field_dependency.clear())#button: clear dependency
     btn_clrdep.place(relx = 0.05,rely = 0.04)
 
-    btn_inkscape = tk.Button(root, text = 'create!',command = lambda : inkscape_control.create(strutil.label(var_snippet.get()), globe.workspace['root']))#button: create fig
+    btn_inkscape = tk.Button(root, text = 'create!',command = lambda : inkscape_control.create(strutil.label(var_snippet.get()), globe.workspace['root']))
     btn_inkscape.place(relx = 0.05,rely = 0.08)
 
-    ## GUI::Menu
+    # Menu
     menubar = tk.Menu(root)
 
     menu_file = tk.Menu(menubar, tearoff = False)
+    menu_file.add_command(label = '切换工作路径',command = lambda : menu_callback('cwd',field_snippet,var_snippet,varr_snippet))
+    menu_file.add_separator()
     menu_file.add_command(label = '导入片段',command = lambda : menu_callback('open',field_snippet,var_snippet,varr_snippet))
     menu_file.add_command(label = '导入依赖区',command = lambda : menu_callback('open',field_dependency,var_dependency,varr_dependency))
     menu_file.add_command(label = '退出',command = root.quit)
     menu_file.add_separator()
-    menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet))#menu: save snippet
+    menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet))
     menu_file.add_command(label ='保存依赖区',command = lambda : menu_callback('save',field_dependency,var_dependency,varr_dependency))
 
 
@@ -119,11 +125,14 @@ def init():
     log.info("GUI destroyed")
 
 
-def callback(widget,var,varr,ttl):
+def callback(widget,var,varr,field_variable):
     """callback"""
     """控制按钮触发"""
-    log.info(ttl.entry.get())
-    var.set(ttl.entry.get())
+    if field_variable.hinting:
+        log.warning("Still hinting")
+        return
+    log.info(field_variable.entry.get())
+    var.set(field_variable.entry.get())
 
     title = var.get()
     title = strutil.caption(title)
@@ -136,7 +145,7 @@ def callback(widget,var,varr,ttl):
     varr.set('经过处理的图片题目:'+title)
     
     if widget.hinting == True:
-        widget.hinting = False
+        widget.unhint()
 
 def menu_callback(command,widget,var,varr):
     """menu_callback
@@ -144,9 +153,9 @@ def menu_callback(command,widget,var,varr):
     :param command: 菜单栏控制
     """
     if command == 'about':
-        tk.messagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.')
+        tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.')
     elif command == 'hint':
-        tk.messagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
+        tkmessagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
     elif command == 'save':
         widget.save_file_as(None,varr)
     elif command == 'open':

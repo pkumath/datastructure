@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
+from tkinter import filedialog as tkfiledialog
+from tkinter import messagebox as tkmessagebox
 import os
 from globe import Globe as globe
 
@@ -25,6 +27,7 @@ class HintEntry(tk.Frame):
         
         self.useHint = useHint
         self.hinting = True if useHint else False
+        if useHint: self.entry.configure(foreground="grey")
 
     def on_click(self, event):
         """on_click
@@ -34,17 +37,21 @@ class HintEntry(tk.Frame):
         if self.hinting == True and self.useHint == True:
             #event.widget.delete(0, tk.END)
             self.entry.delete(0, tk.END)
-            self.hinting = False
+            self.unhint()
 
     def on_edit(self, event):
         if self.hinting == True and self.useHint == True:
             event.widget.delete(0,tk.END)
-            self.hinting = False
+            self.unhint()
+
+    def unhint(self):
+        self.hinting = False
+        self.entry.configure(foreground="black")
 
     def clear(self):
         self.entry.delete('1.0','end')
         if self.useHint == True:
-            self.hinting = False
+            self.unhint()
 
 class HintText(tk.Frame):
     """HintText
@@ -71,6 +78,9 @@ class HintText(tk.Frame):
 
         self.useHint = useHint
         self.hinting = True if useHint else False
+        if useHint: 
+            self.text.tag_add("hint", "1.0", "end")
+            self.text.tag_config("hint", foreground="grey")
 
         
     def on_click(self, event):
@@ -80,7 +90,7 @@ class HintText(tk.Frame):
         """
         if self.hinting == True and self.useHint == True:
             event.widget.delete('1.0', tk.END)
-            self.hinting = False#k += 1
+            self.unhint()#k += 1
         #if self.useHint == False:
             # k = 0
 
@@ -91,14 +101,19 @@ class HintText(tk.Frame):
         """
         if self.hinting == True and self.useHint == True:
             event.widget.delete('1.0',tk.END)
-            self.hinting = False
+            self.unhint()
         # if self.useHint == False:
             # k = 0
 
     def clear(self):
         self.text.delete('1.0','end')
         if self.useHint == True:
-            self.hinting = False
+            self.unhint()
+
+    def unhint(self):
+        self.hinting = False
+        self.text.tag_add("normal", "1.0", "end")
+        self.text.tag_config("hint", foreground="black")
 
     def save_file_as(self, whatever = None,varr= None):
         """save_file_as
@@ -113,7 +128,7 @@ class HintText(tk.Frame):
             if self.filename[-4:] != ".txt": self.filename += ".txt"
             with open(self.filename, 'w') as f:
                 f.write(varr.get() + '\n' + self.text.get('1.0', 'end'))
-            tk.messagebox.showinfo('Good Output!', 'File Saved')
+            tkmessagebox.showinfo('Good Output!', 'File Saved')
         else: print("save cancelled.")
 
     def open_file(self, whatever = None, filename = None,var= None,varr = None):
@@ -137,4 +152,4 @@ class HintText(tk.Frame):
             var.set(self.filename)
             varr.set('经过处理的模版:'+(var.get().split(os.path.sep))[-1])
             if self.useHint == True and self.hinting == True:
-                self.hinting = False
+                self.unhint()
