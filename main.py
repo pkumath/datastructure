@@ -21,6 +21,7 @@ log.basicConfig(level=log.DEBUG, format='[%(levelname)s] %(message)s - %(module)
 
 import gui
 import workspace
+import blueprint
 from globe import Globe as globe
 
 # def myglobal(value):
@@ -38,33 +39,16 @@ def thread2():
     autopaste.trigger()
 
 if __name__ == '__main__':
-    # 路径处理
-    """ # TODO 引入工作区机制
-    figpath = os.path.split(os.path.realpath(__file__))[0]
-    print('main.py',figpath)
-    save_dir = "figures"+os.path.sep
-    if os.path.exists(save_dir) is False:
-        os.makedirs(save_dir)
-
-    gui.figpath = figpath"""
-    
+    blueprint.default()
     workspace.cwd()
-    workspace.sub('figures')#!TEMP
-    
-    # GUI
-    #! MOVETO: gui
-    
-#    menu = tk.Menu(root,tearoff = False)
+        
     threads = []
 
-    t2 = threading.Thread(target=thread2,args=(), name="AutopasteThread")
+    thread_autopaste = threading.Thread(target=thread2,args=(), name="AutopasteThread")
 
-    threads.append(t2)
-    """ for t in threads:
-        t.setDaemon(True)
-        t.start() """
-    t2.setDaemon(True)
-    t2.start()
+    threads.append(thread_autopaste)
+    thread_autopaste.setDaemon(True)
+    thread_autopaste.start()
 
     gui.init()
     
