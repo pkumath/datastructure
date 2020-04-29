@@ -8,7 +8,9 @@ from globe import Globe as globe
 workspace = globe.workspace
 
 def cwd(path = None):
-    dir_root = Path(__file__).parent #!TEMP
+    if path == None: dir_root = Path(__file__).parent
+    else: 
+        dir_root = Path(path)
     os.chdir(dir_root)
 
     log.debug("CWD: %s" % os.getcwd())
