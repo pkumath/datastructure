@@ -124,7 +124,7 @@ class HintText(tk.Frame):
 
         :param whatever:另存为
         """
-        self.filename = tk.filedialog.asksaveasfilename(filetypes = [
+        self.filename = tk.filedialog.asksaveasfilename(initialdir = os.getcwd(), filetypes = [
         ('Text', '*.txt'),
             ],)
         
@@ -133,7 +133,7 @@ class HintText(tk.Frame):
             with open(self.filename, 'w') as f:
                 f.write(varr.get() + '\n' + self.text.get('1.0', 'end'))
             tkmessagebox.showinfo('Good Output!', 'File Saved')
-        else: print("save cancelled.")
+        else: log.info("Save cancelled.")
 
     def open_file(self, whatever = None, filename = None,var= None,varr = None):
         """open_file
@@ -142,7 +142,7 @@ class HintText(tk.Frame):
         :param filename:open txt
         """
         if not filename:
-            self.filename = tk.filedialog.askopenfilename(filetypes = [
+            self.filename = tk.filedialog.askopenfilename(initialdir = os.getcwd(), filetypes = [
         ('Text', '*.txt'),
             ('All files', '*'),
             ])
