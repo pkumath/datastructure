@@ -12,6 +12,7 @@ from function import latex_template #!TEMP
 
 from globe import Globe as globe
 import widget
+import workspace
 from util import StrUtil as strutil
 
 def init():
@@ -160,3 +161,17 @@ def menu_callback(command,widget,var,varr):
         widget.save_file_as(None,varr)
     elif command == 'open':
         widget.open_file(None,None,var,varr)
+    elif command == 'cwd':
+        cwd_select()
+
+def cwd_select():
+        """cwd_select
+
+        选择工作路径
+        """
+        cwdpath = tk.filedialog.askdirectory(initialdir=os.getcwd()) #!TEMP
+        
+        if not (cwdpath == ''):
+            workspace.cwd(cwdpath)
+            tkmessagebox.showinfo('工作路径', '当前工作路径已切换至 {}'.format(os.getcwd()))
+        else: log.warning("Selection cancelled.")
