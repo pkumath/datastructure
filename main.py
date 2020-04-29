@@ -20,6 +20,8 @@ import logging as log
 log.basicConfig(level=log.DEBUG, format='[%(levelname)s] %(message)s - %(module)s::%(funcName)s(%(lineno)d)')
 
 import gui
+import workspace
+from globe import Globe as globe
 
 # def myglobal(value):
     # """myglobal
@@ -37,14 +39,17 @@ def thread2():
 
 if __name__ == '__main__':
     # 路径处理
-    # TODO 引入工作区机制
+    """ # TODO 引入工作区机制
     figpath = os.path.split(os.path.realpath(__file__))[0]
     print('main.py',figpath)
     save_dir = "figures"+os.path.sep
     if os.path.exists(save_dir) is False:
         os.makedirs(save_dir)
 
-    gui.figpath = figpath #!TEMP
+    gui.figpath = figpath"""
+    
+    workspace.cwd()
+    workspace.sub('figures')#!TEMP
     
     # GUI
     #! MOVETO: gui

@@ -11,8 +11,6 @@ from globe import Globe as globe
 import widget
 from util import StrUtil as strutil
 
-figpath = "" #!TEMP
-
 def init():
     # Root
     root = tk.Tk()
@@ -59,7 +57,7 @@ def init():
     btn_clrdep = tk.Button(root, text = '清空依赖区',command = lambda : field_dependency.clear())#button: clear dependency
     btn_clrdep.place(relx = 0.05,rely = 0.04)
 
-    btn_inkscape = tk.Button(root, text = 'create!',command = lambda : inkscape_control.create(strutil.caption(var_snippet.get()),figpath))#button: create fig
+    btn_inkscape = tk.Button(root, text = 'create!',command = lambda : inkscape_control.create(strutil.label(var_snippet.get()), globe.workspace['root']))#button: create fig
     btn_inkscape.place(relx = 0.05,rely = 0.08)
 
     ## GUI::Menu
