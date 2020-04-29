@@ -3,12 +3,11 @@ from tkinter import filedialog as tkfiledialog
 from tkinter import messagebox as tkmessagebox
 import pyperclip
 import threading
-import os #!TEMP
+import os
 
 import logging as log
 
 import inkscape_control
-from function import latex_template #!TEMP
 
 from globe import Globe as globe
 import widget
@@ -28,10 +27,10 @@ def init():
     varr_snippet = tk.StringVar()
     varr_dependency = tk.StringVar()
 
-    varr_snippet.set('经过处理的图片题目:'+var_snippet.get())
+    varr_snippet.set('经过处理的图片文件名:'+var_snippet.get())
 
     # Hint
-    hint_variable = '图片标题'
+    hint_variable = '图片名称'
     hint_snippet = ' 提示:这是一个自制的简易LaTeX模版生成程序,我们将持续加入其他模版作为扩展,这是在macOS下制作的,我本人不是很清楚Menu组件和Windows显示的是否一致.\n众所周知的是,原来课本上的menu写法只在Windows上生效,因为Mac里的menu是显示在屏幕最上方而不是窗口里面的.\n如果您没有成功显示,换一个电脑,或者忽略格式错误.\n'+\
 '**********************************************************************************\n下方浅黄色区域时就是您的工作区域.\n请输入...'
     hint_dependency = '这里是上面模版所需的LaTeX依赖展示区.是需要被放入导言区的内容.'
@@ -53,16 +52,16 @@ def init():
 
     # Button
 
-    btn_generate = tk.Button(root, text = '生成LaTeX图片模版并复制',command = lambda : callback(field_snippet, var_snippet,varr_snippet,field_variable))
+    btn_generate = tk.Button(root, text = '生成片段并复制',command = lambda : callback(field_snippet, var_snippet,varr_snippet,field_variable))
     btn_generate.place(relx = 0.7, rely = 0.04) 
 
-    btn_clrsnip = tk.Button(root, text = '清空片段',command = lambda : field_snippet.clear())#button: clear snippet
+    btn_clrsnip = tk.Button(root, text = '清空片段',command = lambda : field_snippet.clear())
     btn_clrsnip.place(relx = 0.2,rely = 0.04)
 
     btn_clrdep = tk.Button(root, text = '清空依赖区',command = lambda : field_dependency.clear())#button: clear dependency
     btn_clrdep.place(relx = 0.05,rely = 0.04)
 
-    btn_inkscape = tk.Button(root, text = 'create!',command = lambda : inkscape_control.create(strutil.label(var_snippet.get()), globe.workspace['root']))
+    btn_inkscape = tk.Button(root, text = '执行宏',command = lambda : globe.blueprint.do_macro(name=field_variable.content()))#inkscape_control.create(strutil.label(var_snippet.get())))
     btn_inkscape.place(relx = 0.05,rely = 0.08)
 
     # Menu
@@ -132,18 +131,18 @@ def callback(widget,var,varr,field_variable):
     if field_variable.hinting:
         log.warning("Still hinting")
         return
-    log.info(field_variable.entry.get())
-    var.set(field_variable.entry.get())
+    log.info(field_variable.content())
+    var.set(field_variable.content())
 
-    title = var.get()
-    title = strutil.caption(title)
-    if title == "": return
+    variable = var.get()
+    fileName = globe.blueprint.get_factor(**{'name': variable})['fileName']
+    fragment = globe.blueprint.get_fragment(**{'name': variable})
 
     # text.myvar.set(latex_template(var.get(),title))
     widget.text.delete('1.0','end')
-    widget.text.insert('1.0',latex_template(var.get(),title))
-    pyperclip.copy(latex_template(var.get(),title))
-    varr.set('经过处理的图片题目:'+title)
+    widget.text.insert('1.0', fragment)
+    pyperclip.copy(fragment)
+    varr.set('经过处理的图片题目:'+fileName)
     
     if widget.hinting == True:
         widget.unhint()

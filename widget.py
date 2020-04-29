@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog as tkfiledialog
 from tkinter import messagebox as tkmessagebox
 import os
+import logging as log
 from globe import Globe as globe
 
 class HintEntry(tk.Frame):
@@ -28,6 +29,9 @@ class HintEntry(tk.Frame):
         self.useHint = useHint
         self.hinting = True if useHint else False
         if useHint: self.entry.configure(foreground="grey")
+
+    def content(self):
+        return self.entry.get()
 
     def on_click(self, event):
         """on_click

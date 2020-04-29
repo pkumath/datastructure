@@ -12,6 +12,7 @@ import logging as log
 
 from globe import Globe as globe
 from util import StrUtil as strutil
+import workspace
 
 user_dir = Path(user_config_dir("project", "ww"))
 if not user_dir.is_dir():
@@ -38,7 +39,7 @@ def inkscape(path):
     subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
     log.info("Export to pdf_tex process and InkscapeThread terminated")
 
-def create(title, root): #TODO: Remove root
+def create(factor):
 #     """
     # Creates a figure.
 
@@ -65,16 +66,16 @@ def create(title, root): #TODO: Remove root
     Second argument is the figure directory.
 
     """
+    workspace.sub('figures')
 
-    log.debug("Title " + title)
-    title = strutil.fileName(title)
-    file_name = title + '.svg'
-    log.debug("File name " + file_name)
+    log.debug("File name without extension " + factor['fileName'])
+    file_fullname = factor['fileName'] + '.svg'
+    log.debug("File name " + file_fullname)
 
     #figures = Path(root).absolute()/'figures' # TODO: 自定义文件夹
     figures_dir = Path(globe.workspace['sub']['figures'])
 
-    figure_path = figures_dir / file_name
+    figure_path = figures_dir / file_fullname
 
     # If a file with this name already exists, quit
     #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里

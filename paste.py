@@ -3,7 +3,6 @@
 
 import pyperclip as pyperclip
 import time
-from function import latex_template
 
 import os
 
@@ -36,13 +35,8 @@ def on_activate():
     time.sleep(0.5)
 
     variable = pyperclip.paste()
-
-    label = strutil.label(variable)
-    caption = strutil.caption(variable)
-    if label == "": return
-    
-    manage_string = latex_template(label, caption)
-    pyperclip.copy(manage_string)
+    fragment = globe.blueprint.get_fragment(**{'name': variable})
+    pyperclip.copy(fragment)
 
     time.sleep(0.5)
 
@@ -53,12 +47,11 @@ def on_activate():
     elif SYSTEM == "Windows":
         keyboard.send('ctrl+v')
 
-    figpath = os.path.split(os.path.realpath(__file__))[0]
     time.sleep(0.5)
 
     if SYSTEM == "Darwin": pyperclip.copy('')
 
-    inkscape_control.create(variable,figpath)
+    globe.blueprint.do_macro(name=variable)
     log.info('Global hotkey function terminated')
 
 def trigger():

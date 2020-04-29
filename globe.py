@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from platform import system
 
 class Globe():
@@ -22,6 +25,6 @@ class Globe():
     workspace = {}
     workspace['sub'] = {}
 
-    template = {}
+    blueprint = None
 
     SYSTEM = system()
