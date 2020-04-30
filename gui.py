@@ -61,7 +61,7 @@ def init():
     btn_clrdep = tk.Button(root, text = '清空依赖区',command = lambda : field_dependency.clear())#button: clear dependency
     btn_clrdep.place(relx = 0.05,rely = 0.04)
 
-    btn_inkscape = tk.Button(root, text = '执行宏',command = lambda : globe.blueprint.do_macro(name=field_variable.content()))#inkscape_control.create(strutil.label(var_snippet.get())))
+    btn_inkscape = tk.Button(root, text = '执行宏',command = lambda : globe.blueprint.do_macro(name=field_variable.content()) if not field_variable.hinting else None)#inkscape_control.create(strutil.label(var_snippet.get())))
     btn_inkscape.place(relx = 0.05,rely = 0.08)
 
     # Menu
