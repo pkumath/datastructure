@@ -6,6 +6,7 @@ from tkinter import filedialog as tkfiledialog
 from tkinter import messagebox as tkmessagebox
 import os
 import logging as log
+
 from globe import Globe as globe
 
 class HintEntry(tk.Frame):

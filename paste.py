@@ -25,7 +25,7 @@ def on_activate():
     
     if SYSTEM == "Darwin":
         keyboard_controller = keyboard.Controller()
-        with keyboard_controller.pressed(keyboard.Key.ctrl):
+        with keyboard_controller.pressed(keyboard.Key.cmd):
             keyboard_controller.press('c')
             keyboard_controller.release('c')
     elif SYSTEM == "Windows":
@@ -41,7 +41,7 @@ def on_activate():
     time.sleep(0.5)
 
     if SYSTEM == "Darwin":
-        with keyboard_controller.pressed(keyboard.Key.ctrl):
+        with keyboard_controller.pressed(keyboard.Key.cmd):
             keyboard_controller.press('v')
             keyboard_controller.release('v')
     elif SYSTEM == "Windows":
@@ -61,7 +61,7 @@ def trigger():
             return lambda k: f(l.canonical(k))
 
         hotkey = keyboard.HotKey(
-            keyboard.HotKey.parse('<ctrl>+u'),
+            keyboard.HotKey.parse('<cmd>+u'),
             on_activate)
         
         l = keyboard.Listener(

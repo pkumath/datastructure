@@ -153,7 +153,7 @@ def menu_callback(command,widget,var,varr):
     :param command: 菜单栏控制
     """
     if command == 'about':
-        tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.')
+        tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.\n 王奕轩, 1900014136, department of chinese, Peking University.')
     elif command == 'hint':
         tkmessagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
     elif command == 'save':
@@ -168,7 +168,7 @@ def cwd_select():
 
         选择工作路径
         """
-        cwdpath = tk.filedialog.askdirectory(initialdir=os.getcwd()) #!TEMP
+        cwdpath = tk.filedialog.askdirectory(initialdir=os.getcwd())
         
         if not (cwdpath == ''):
             workspace.cwd(cwdpath)

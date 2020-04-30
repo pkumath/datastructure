@@ -72,7 +72,6 @@ def create(factor):
     file_fullname = factor['fileName'] + '.svg'
     log.debug("File name " + file_fullname)
 
-    #figures = Path(root).absolute()/'figures' # TODO: 自定义文件夹
     figures_dir = Path(globe.workspace['sub']['figures'])
 
     figure_path = figures_dir / file_fullname

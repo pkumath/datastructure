@@ -16,7 +16,6 @@ class Blueprint():
         self.dependency = config.get('dependency',"")
         self.factor = config.get('factor',{})
         self.macro = config.get('macro',"")
-        #self.autopaste = config.get('autopaste',{})
 
     def get_factor(self, **kwargs):
         factors = {}
@@ -34,7 +33,7 @@ class Blueprint():
             elif facmethod == '':
                 factors[fac] = kwargs[var]
             else:
-                log.error("External forging method not implemented") #TODO: External forging method
+                log.error("External factor method not implemented") #TODO: 外部生成要素方法
                 continue
         return factors
 
@@ -57,20 +56,12 @@ class Blueprint():
             log.debug("No macro.")
             return
         else:
-            log.error("External forging method not implemented") #TODO: External forging method
+            log.error("External macro method not implemented") #TODO: 外部宏
             return
         
-            
-    '''
-    def genSnippet(self, **kwargs):
-        print(kwargs)
-        formatDict = {key: Blueprint.genFuncs[value](kwargs[key]) for (key, value) in self.variable.items()}
-        return self.snippet.format_map(formatDict)
+globe.blueprint = Blueprint()
 
-    def genMacro(self):
-        return Blueprint.macFuncs[self.macro]'''
-
-class FacMethod(): 
+class FacMethod(): # 要素生成相关方法
     @staticmethod
     def find(facMethod, arg=None):
         strutil = importlib.import_module("util").StrUtil
@@ -82,7 +73,7 @@ class FacMethod():
             log.error("No such built-in forging method '%s'" % facMethod)
             return lambda string: string
 
-class Macro(): 
+class Macro():  # 执行宏的方法
     @staticmethod
     def find(macro):
         if macro == "inkscape":
@@ -92,7 +83,7 @@ class Macro():
             log.error("No such built-in macro '%s'" % macro)
             return lambda factors: None
 
-def default():
+def default(): # 默认蓝图
     default_dependency = r'''\usepackage{import}
 \usepackage{float}
 \usepackage{pdfpages}

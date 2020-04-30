@@ -1,55 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#import tkinter as tk
-#import importlib
-#import tkinter.messagebox as messagebox
-#import tkinter.filedialog as filedialog
-import os
-#import pyautogui as pya
-#import pyperclip
-#import time
-import sys
-#import keyboard as kd
-#import inkscape_control import *
-#from function import *
 import threading
-import paste as autopaste
+
 
 import logging as log
 log.basicConfig(level=log.DEBUG, format='[%(levelname)s] %(message)s - %(module)s::%(funcName)s(%(lineno)d)')
 
+from globe import Globe as globe
 import gui
 import workspace
 import blueprint
-from globe import Globe as globe
+import paste as autopaste
 
-# def myglobal(value):
-    # """myglobal
-
-    # :param value:k是一个重要的全局变量,可以在文件之间相互调用和修改,方法是通过函数实现的,用来表达文本内容是否需要清空的状态.
-    # """
-    # global k
-    # k = value
-
-#ce = importlib.import_module('special_label')
-
-
-def thread2():
-    autopaste.trigger()
 
 if __name__ == '__main__':
-    blueprint.default()
-    workspace.cwd()
+    blueprint.default() # 加载默认蓝图，最好在最前面执行
+    workspace.cwd() # 加载默认工作路径，即 py 所在路径 #TODO 保存上次的工作路径？
         
     threads = []
 
-    thread_autopaste = threading.Thread(target=thread2,args=(), name="AutopasteThread")
+    thread_autopaste = threading.Thread(target=autopaste.trigger, args=(), name="AutopasteThread")
 
     threads.append(thread_autopaste)
     thread_autopaste.setDaemon(True)
-    thread_autopaste.start()
+    thread_autopaste.start() # 启动自动复制线程
 
-    gui.init()
+    gui.init() # 启动 GUI
+    # 据称 Tk ‘线程不安全’，只能在主线程中执行
     
     log.info("Program terminated")
