@@ -9,7 +9,7 @@ class Globe():
     模块之间共用的全局变量。
     - ui: 包含GUI各元素引用的字典
     - workspace: 工作区文件夹
-    - template: 模板设置
+    - blueprint: 蓝图设置
     - SYSTEM: 操作系统名称，Darwin/Windows
     '''
     
@@ -23,8 +23,8 @@ class Globe():
     '''
   
     workspace = {}
-    workspace['sub'] = {}
+    workspace['sub'] = {} # 工作区：子文件夹
 
-    blueprint = None
+    blueprint = None # 蓝图
 
-    SYSTEM = system()
+    SYSTEM = system() # 操作系统
