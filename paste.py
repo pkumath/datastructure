@@ -21,7 +21,6 @@ elif SYSTEM == "Windows":
 
 def on_activate():
     log.info('Global hotkey activated')
-
     
     if SYSTEM == "Darwin":
         keyboard_controller = keyboard.Controller()
