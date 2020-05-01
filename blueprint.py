@@ -122,14 +122,3 @@ def default(): # 默认蓝图
     globe.blueprint = default_blueprint
     default_blueprint.get_factor(name='Hi')
     log.info("Default blueprint loaded")
-
-default()
-pass
-
-'''
-test.variable = {'name':'fileName', 'title':'caption', 'label':'label'}
-test.macro = 'draw'
-ipt = "This-is-a&_test"
-#print(test.genSnippet(name = ipt, title = ipt, label = ipt))
-#macro = test.genMacro()
-#macro(title=Blueprint.genFuncs['fileName'](ipt),root=os.path.split(os.path.realpath(__file__))[0])'''
