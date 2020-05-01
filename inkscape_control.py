@@ -28,7 +28,7 @@ if not template.is_file():
     copy(source, destination)
 
 def inkscape(path):
-    log.info("InkscapeThread started")
+    log.info("Inkscape function started")
 
     processOpen = subprocess.Popen(['inkscape', str(path)])
     log.info("Opening file")
@@ -37,7 +37,7 @@ def inkscape(path):
     log.info("Inkscape process terminated")
 
     subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
-    log.info("Export to pdf_tex process and InkscapeThread terminated")
+    log.info("Export to pdf_tex process and Inkscape function terminated")
 
 def create(factor):
 #     """
@@ -83,10 +83,8 @@ def create(factor):
         return 
     else:
         copy(str(template), str(figure_path))
+        log.info("Template copied")    
     
-    log.info("Template copied")
-    inkscape_thread = threading.Thread(target=inkscape, args=(figure_path,), name="InkscapeThread")
-    inkscape_thread.setDaemon(True)
-    inkscape_thread.start()
-    log.info("Starting InkscapeThread")
+    log.info("Starting Inkscape")
+    inkscape(figure_path)
     return
