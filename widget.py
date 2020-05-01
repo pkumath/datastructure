@@ -155,6 +155,6 @@ class HintText(tk.Frame):
                 self.text.delete('1.0', 'end')
                 self.text.insert('1.0', f2)
             var.set(self.filename)
-            varr.set('经过处理的模版:'+(var.get().split(os.path.sep))[-1])
+            varr.set('经过处理的模版:'+(var.get().split('/'))[-1])
             if self.useHint == True and self.hinting == True:
                 self.unhint()
