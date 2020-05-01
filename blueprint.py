@@ -120,5 +120,4 @@ def default(): # 默认蓝图
     })
 
     globe.blueprint = default_blueprint
-    default_blueprint.get_factor(name='Hi')
     log.info("Default blueprint loaded")
