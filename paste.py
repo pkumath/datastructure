@@ -56,6 +56,8 @@ def open_vim():
     if SYSTEM == "Darwin":
         mouse = Controller()
         keyboard_controller = keyboard.Controller()
+        keyboard_controller.press(keyboard.Key.esc)
+        keyboard_controller.release(keyboard.Key.esc)
         keyboard_controller.press('t')
         keyboard_controller.release('t')
 
@@ -108,6 +110,7 @@ def on_activate():
     if SYSTEM == "Darwin": pyperclip.copy('')
 
     globe.blueprint.do_macro(name=variable)
+
     log.info('Global hotkey function terminated')
 
 
@@ -120,7 +123,7 @@ def trigger():
         # hotkey = keyboard.HotKey(
         #     keyboard.HotKey.parse('<cmd>+u'),
         #     on_activate)
-
+        #Mac无法两个快捷键同时运行
         with keyboard.GlobalHotKeys({'<cmd>+u': on_activate,
                                      '<cmd>+i': open_vim}) as hotkey:
             hotkey.join()
