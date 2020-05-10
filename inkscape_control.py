@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import paste
 import subprocess
 import threading
 from pathlib import Path
@@ -13,6 +14,13 @@ import logging as log
 from globe import Globe as globe
 from util import StrUtil as strutil
 import workspace
+SYSTEM = globe.SYSTEM
+
+if SYSTEM == "Darwin":
+    from pynput import keyboard
+elif SYSTEM == "Windows":
+    import keyboard
+    import mouse as w_mouse
 
 user_dir = Path(user_config_dir("project", "ww"))
 if not user_dir.is_dir():
@@ -29,10 +37,25 @@ if not template.is_file():
 
 def inkscape(path):
     log.info("Inkscape function started")
+    #
+    # def for_canonical(f):
+    #     log.info("for_canonical")
+    #     return lambda k: f(l.canonical(k))
+
+    # hotkey = keyboard.HotKey(
+    #     keyboard.HotKey.parse('<cmd>+u'),
+    #     on_activate)
 
     processOpen = subprocess.Popen(['inkscape', str(path)])
     log.info("Opening file")
-
+    # with keyboard.GlobalHotKeys({'<cmd>+i': paste.open_vim}) as hotkey:
+    #     hotkey.join()
+    # l = keyboard.Listener(
+    #     on_press=for_canonical(hotkey.press),
+    #     on_release=for_canonical(hotkey.release),
+    #     # suppress=True
+    # )
+    # l.start()
     processOpen.wait()
     log.info("Inkscape process terminated")
 
