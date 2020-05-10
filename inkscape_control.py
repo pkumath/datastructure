@@ -80,7 +80,7 @@ def create(factor):
     #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里
     if figure_path.exists():
         inkscape(figure_path)
-        log.warning("{} already exists. Quit.".format(str(figure_path)))
+        log.warning("{} already exists. Edit but not create.".format(str(figure_path)))
         return
     else:
         copy(str(template), str(figure_path))
