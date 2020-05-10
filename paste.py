@@ -20,6 +20,7 @@ if SYSTEM == "Darwin":
     from pynput import keyboard
 elif SYSTEM == "Windows":
     import keyboard
+    import mouse as w_mouse
 
 
 def open_editor(filename):
@@ -32,7 +33,10 @@ def open_editor(filename):
             f"{filename}",
         ])
     elif SYSTEM == "Windows":
-        pass
+        subprocess.run([
+            'gvim',
+            f"{filename}",
+        ])
 
 
 def open_vim():
@@ -49,17 +53,25 @@ def open_vim():
     print(latex)
     pyperclip.copy(latex)
 
-    mouse = Controller()
-    keyboard_controller = keyboard.Controller()
-    keyboard_controller.press('t')
-    keyboard_controller.release('t')
+    if SYSTEM == "Darwin":
+        mouse = Controller()
+        keyboard_controller = keyboard.Controller()
+        keyboard_controller.press('t')
+        keyboard_controller.release('t')
 
-    mouse.press(Button.left)
-    mouse.release(Button.left)
+        mouse.press(Button.left)
+        mouse.release(Button.left)
 
-    with keyboard_controller.pressed(keyboard.Key.ctrl):
-        keyboard_controller.press('v')
-        keyboard_controller.release('v')
+        with keyboard_controller.pressed(keyboard.Key.ctrl):
+            keyboard_controller.press('v')
+            keyboard_controller.release('v')
+    elif SYSTEM == "Windows":
+        w_mouse.click("left")
+        time.sleep(0.5)
+        keyboard.send("F8")
+        w_mouse.click("left")
+        keyboard.send("ctrl+v")
+    
     os.remove(f.name)
 
 
@@ -120,3 +132,4 @@ def trigger():
         l.start()
     elif SYSTEM == "Windows":
         keyboard.add_hotkey('ctrl+u', on_activate, )  # suppress=True)
+        keyboard.add_hotkey('ctrl+alt+i', open_vim)

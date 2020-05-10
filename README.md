@@ -102,5 +102,100 @@ Globe.workspace 中 'root' 可以取得工作路径，当然用 os 模块更方�
   - 希望在gui中集成目录下svg的显示,并创建edit按钮,免去查重和来回切换目录的麻烦.这将间接解决[遗留问题和想法](#遗留问题和想法)的最后一条.
   - 希望实现“蓝图”中图片标题和依赖区的同步出现,这将在极小的一部分实现与gui的配合.详细的说,是导入(图片)片段或者依赖区之后,另外一者能同步刷新.
   - 另外, 我也将试图解决上面问题中的其他方面,但是优先级更低.
+  
+  ## 对于Mac端的特性更改:
+  
+  1.Mac端的inkscape版本不能使用最新的1.0beta.我使用的是0.92版本,使用macports安装.要求是支持xlib并且可以从命令行启动.如果你无法启动inkscape,考虑检查版本.
+  
+  2.使用xterm与vim的结合操作inkscape中的文本输入或者(别的地方)的简短的tex代码插入.调用方法是快捷键<command>+I.如果您无法使用,在命令行输入
+  
+```
+  xterm
+```
+
+检查是否能正常运行xterm.对于vim如果您不熟悉也没有关系,只需要知道按i键开始编辑,esc键退出编辑模式,并在正常模式(normal mode)下输入:wq退出即可.
+
+3.对于xterm的配置,建议使用以下配置:
+
+```
+XTerm*preeditType: Root
+XTerm*cursorColor: OliveDrab1
+XTerm*background: black
+XTerm*foreground: AntiqueWhite1
+XTerm*font: -misc-fixed-medium-r-normal-*-18-120-100-100-c-90-iso10646-1
+XTerm*wideFont: -misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1
+xterm*faceNameDoublesize: -misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1
+XTerm*scrollBar:true
+XTerm*rightScrollBar:true
+XTerm*inputMethod:fcitx
+xterm*VT100.Translations: #override \
+                 Ctrl Shift <Key>V:    insert-selection(CLIPBOARD) \n\
+                 Ctrl Shift <Key>C:    copy-selection(CLIPBOARD)
+XTerm*SaveLines: 4096
+
+
+```
+mac端将能正常显示中文.如果您的中文无法正常显示,考虑修改配置如上.修改方法是在主目录下创建.Xresources并在其中输入以上内容,保存之后在命令行输入
+```
+xrdb ~/.Xresources 
+```
+
+然后重启X11.
+
+## 图片管理视窗
+
+右侧是图片管理器.
+
+需要注意的是,删除的文件并不会进入回收站,而是被彻底删除,这点需要注意.
+
+另外,如果发现文件显示不全,请手动刷新.
+
+## 新增函数及文件说明
+
+- demo.tex: 对于调用相关latex代码显示插图的示范.
+- edit_scroll_process.py: 通常被调用为svg_file
+```
+import edit_scroll_process as svg_file
+```
+从这里我们也可以看出来这个文件是被用来给出给定父目录(即参数)下的figures文件夹下的所有svg文件名的.这也要求figures文件夹是否存在的检测必须提前.
+
+- function.py: 在menucallback函数的about菜单中添加了温刚的修改日期.
+
+- gui.py: 
+    - root.geometry('700x800').初始窗口大小被修改,横向放大,为listbox做准备.
+    - field_list: 利用了在widget.py中新写的listbox继承类.用来展示获得的svg列表.
+    - menu_callback: 添加了listbox参数用来控制field_list.并在每一次操作完之后进行listbox.update(),即更新listbox的状态,获取新的文件列表.
+    
+- inkscape_control.py:
+    - create(factor):在if语句中加入了查重的操作
+```
+        inkscape(figure_path)
+               log.warning("{} already exists. Edit but not create.".format(str(figure_path)))
+ ```
+ 
+ - paste.py:
+    - open_editor(filename): 用来打开tex微型编辑器.Mac使用xterm,不支持中文,但可以显示.
+    - open_vim(): 进行微型编辑器打开之前的初始化操作.
+    
+- widget.py:增加了新类make_list.用来展示获得的svg.
+- workspace.py: 在最开始的初始化前必须检查figures是否存在,因此添加了代码
+```
+    # if os.path.isdir(os.getcwd()+os.path.sep+ 'figures'):
+       #     pass
+       # else:
+       #     os.mkdir('figures')
+    sub('figures')
+```
+第一段代码注释掉是因为他没有跨平台性,在windows上不能运行.
+
+    
+        
+    
+    
+    
+
+
+
+
 
 
