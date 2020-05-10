@@ -56,8 +56,10 @@ def open_vim():
     if SYSTEM == "Darwin":
         mouse = Controller()
         keyboard_controller = keyboard.Controller()
+        time.sleep(0.2)
         keyboard_controller.press(keyboard.Key.esc)
         keyboard_controller.release(keyboard.Key.esc)
+        time.sleep(0.2)
         keyboard_controller.press('t')
         keyboard_controller.release('t')
 
