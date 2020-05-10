@@ -79,12 +79,13 @@ def create(factor):
     # If a file with this name already exists, quit
     #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里
     if figure_path.exists():
+        inkscape(figure_path)
         log.warning("{} already exists. Quit.".format(str(figure_path)))
-        return 
+        return
     else:
         copy(str(template), str(figure_path))
-        log.info("Template copied")    
+        log.info("Template copied")
     
-    log.info("Starting Inkscape")
-    inkscape(figure_path)
-    return
+        log.info("Starting Inkscape")
+        inkscape(figure_path)
+        return

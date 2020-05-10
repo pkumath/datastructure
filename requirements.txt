@@ -2,3 +2,6 @@ keyboard==0.13.5;platform_system="Windows"
 pynput==1.6.8;platform_system="Darwin"
 appdirs==1.4.3
 pyperclip==1.8.0
+
+keyboard~=0.13.5
+pynput~=1.6.8

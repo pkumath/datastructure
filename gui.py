@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog as tkfiledialog
 from tkinter import messagebox as tkmessagebox
+from pathlib import Path
 import pyperclip
 import threading
 import os
@@ -11,6 +12,7 @@ import inkscape_control
 
 from globe import Globe as globe
 import widget
+import  edit_scroll_process as svg_file
 import workspace
 from util import StrUtil as strutil
 
@@ -18,7 +20,7 @@ def init():
     # Root
     root = tk.Tk()
     root.title('LaTeX模版生成程序')
-    root.geometry('600x800')
+    root.geometry('700x800')
 
     # Var
     var_snippet = tk.StringVar()
@@ -39,11 +41,14 @@ def init():
     field_variable = widget.HintEntry(root,0,0,hint_variable) 
     field_variable.place(relx = 0.5,rely = 0.05, anchor = tk.CENTER)
 
+    field_list = widget.make_list(root,svg_file.get_svgnames(os.getcwd()),os.getcwd())
+    field_list.place(relheight = 0.8,relwidth = 0.27,relx = 0.7,rely = 0.15)
+
     field_snippet = widget.HintText(root,0,0,hint_snippet,80,40) 
-    field_snippet.place(relheight = 0.4, relwidth = 1, rely = 0.15)
+    field_snippet.place(relheight = 0.4, relwidth = 0.7, rely = 0.15)
 
     field_dependency = widget.HintText(root,0,0,hint_dependency,80,40)# useHint = False)
-    field_dependency.place(relheight = 0.4, relwidth = 1, rely = 0.55)
+    field_dependency.place(relheight = 0.4, relwidth = 0.7, rely = 0.55)
 
     # Label
 
@@ -53,7 +58,11 @@ def init():
     # Button
 
     btn_generate = tk.Button(root, text = '生成片段并复制',command = lambda : callback(field_snippet, var_snippet,varr_snippet,field_variable))
-    btn_generate.place(relx = 0.7, rely = 0.04) 
+    btn_generate.place(relx = 0.7, rely = 0.04)
+
+    btn_edit = tk.Button(root, text='编辑已有图片！',
+                             command=lambda : globe.blueprint.do_macro(name=field_list.content()))
+    btn_edit.place(relx=0.7, rely=0.08)
 
     btn_clrsnip = tk.Button(root, text = '清空片段',command = lambda : field_snippet.clear())
     btn_clrsnip.place(relx = 0.2,rely = 0.04)
@@ -68,19 +77,19 @@ def init():
     menubar = tk.Menu(root)
 
     menu_file = tk.Menu(menubar, tearoff = False)
-    menu_file.add_command(label = '切换工作路径',command = lambda : menu_callback('cwd',field_snippet,var_snippet,varr_snippet))
+    menu_file.add_command(label = '切换工作路径',command = lambda : menu_callback('cwd',field_snippet,var_snippet,varr_snippet,field_list))
     menu_file.add_separator()
     menu_file.add_command(label = '导入片段',command = lambda : menu_callback('open',field_snippet,var_snippet,varr_snippet))
-    menu_file.add_command(label = '导入依赖区',command = lambda : menu_callback('open',field_dependency,var_dependency,varr_dependency))
+    menu_file.add_command(label = '导入依赖区',command = lambda : menu_callback('open',field_dependency,var_dependency,varr_dependency,field_list))
     menu_file.add_command(label = '退出',command = root.quit)
     menu_file.add_separator()
     menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet))
-    menu_file.add_command(label ='保存依赖区',command = lambda : menu_callback('save',field_dependency,var_dependency,varr_dependency))
+    menu_file.add_command(label ='保存依赖区',command = lambda : menu_callback('save',field_dependency,var_dependency,varr_dependency,field_list))
 
 
     menu_help = tk.Menu(menubar, tearoff = False)
-    menu_help.add_command(label = '关于...',command = lambda : menu_callback('about',field_snippet,var_snippet,varr_snippet))
-    menu_help.add_command(label = '使用说明',command = lambda : menu_callback('hint',field_snippet,var_snippet,varr_snippet))
+    menu_help.add_command(label = '关于...',command = lambda : menu_callback('about',field_snippet,var_snippet,varr_snippet,field_list))
+    menu_help.add_command(label = '使用说明',command = lambda : menu_callback('hint',field_snippet,var_snippet,varr_snippet,field_list))
 
     menubar.add_cascade(label = '文件',menu = menu_file)
     menubar.add_cascade(label = '帮助', menu = menu_help)
@@ -147,21 +156,26 @@ def callback(widget,var,varr,field_variable):
     if widget.hinting == True:
         widget.unhint()
 
-def menu_callback(command,widget,var,varr):
+def menu_callback(command,widget,var,varr,listbox):
     """menu_callback
 
     :param command: 菜单栏控制
     """
     if command == 'about':
-        tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于4.15最后一次修改, 1800011095,\n school of mathematics, Peking University.\n 王奕轩, 1900014136, department of chinese, Peking University.')
+        tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于5.10最后一次修改, 1800011095,\n school of mathematics, Peking University.\n 王奕轩, 1900014136, department of chinese, Peking University.')
+        listbox.update()
     elif command == 'hint':
         tkmessagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
+        listbox.update()
     elif command == 'save':
         widget.save_file_as(None,varr)
+        listbox.update()
     elif command == 'open':
         widget.open_file(None,None,var,varr)
+        listbox.update()
     elif command == 'cwd':
         cwd_select()
+        listbox.update()
 
 def cwd_select():
         """cwd_select
