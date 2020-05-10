@@ -1,157 +1,106 @@
-# LaTex代码模版管理器1.0(仅支持图片).[数据结构与算法,wg,wyx]
+# LaTeX代码模版管理器
 
-这是一个初步的版本,仅有支持图片的代码段管理功能.
-手边没有Windows机器参考,我略微修改了初始的思路,原因见最后:**‌遗留的问题和建议**
-现在的思路是:做一个类似于代码仓库一类的代码管理器,同时能调用第三方软件便利插图等操作.
+数据结构与算法.[wg,wyx]
+
+## 变动
+
+- 调整了各个函数、模块的[编排](#文件结构)
+- 引入了一些新的[术语](#术语)
+- 调整了[依赖](#依赖)
+- `遗留问题1` 设置工作路径及 /figures 路径，包括初步的图形界面实现
+- `遗留问题2` 自动复制功能 Autopaste 的跨平台实现
+- `遗留问题3` 打开、保存文件时自动保存至工作路径
+- 关闭 Inkscape 窗口后，自动导出 pdf 和 pdf_tex
+- 原有功能初步模块化，称为“蓝图”
+
+## 编排
+
+- main.py 主文件
+- globe.py 定义了全局变量类
+- workspace.py 定义了与工作区(工作路径)有关的函数
+- blueprint.py 定义了蓝图类和默认蓝图
+- util.py 实用函数，目前有 StrUtil 字符串函数
+- widget.py 自定义 GUI 组件
+- paste.py 自动复制功能 Autopaste
+- inkscape_control.py 自带的 inkscape 宏
+
+## 术语
+
+增加了一些（奇怪的）构想，比如工作区、蓝图……几个核心概念如下：
+
+- 工作区 workspace：工作路径和自动生成文件的子文件夹（现在是 /figures ）
+- 蓝图 blueprint：围绕着一个 tex 代码模板的一系列功能集合
+  - 变量 variable：原 ttl 中的内容，即一组**原始数据**，需要在蓝图中指定变量的名称（现在只有一个：name）
+  - 要素 factor：原来的 name、title，即生成代码片段中使用到的量（如图片标题、引用标签、文件名等）
+  - 模板 snippet：插入 tex 正文的模板（原 latex_template）
+  - 片段 fragment：一个可以直接插入 tex 源码的片段，根据变量的值和模板生成（目前也显示在模板文本框 field_snippet 内）
+  - 宏 macro：一段实用程序，在生成片段后执行（inkscape.create）
 
 ## 依赖
 
-Python3.6以上.我已经在代码中尽量使用了跨平台的描述.如果还有问题,换一个Mac电脑或者交流修改.
-另外需要系统预安装了inkscape,并且勾选添加到环境变量(或者只要你能从命令行启动就可以.)
-使用的python库如下:(有一些在调试的过程可能已经没有用了,但是先放在这)
+第三方库没有改变，增加了平台判断，免于在 Mac 上安装根本跑不了的 keyboard 包。
 
-* tkinter,tkinter.messagebox,tkinter.filedialog(后两个是第一个子模块)
-* importlib
-* os
-* pyautogui
-* pyperclip
-* time
-* keyboard
-* subprocess
-* pathlib
-* shutil
-* appdirs
-* sys
+## 全局变量
 
-## 安装
+原有的全局变量有些奇怪，VSCode 一直报错，报了几十个，把真正的错误埋了，​因此去掉了，k 变成了组件自带的 hinting 属性，又使用了一个 globe 文件管理全局变量。
 
-我已经使用pip生成了部分包的requirements;若不完整,只需要按照错误提示逐个下载,希望在这个过程中可以尝试手动添加一下requirements;如果都安装以后就很难再手动添加了.
+globe 文件里有 Globe 类，封装在类里能保证全局可用。但是 globe 文件中不能引入蓝图类 Blueprint（循环导入），因此 Globe.blueprint 初始化成了 None，容易出错。
 
-使用只需在项目根目录下:
-```
-pip install -r requirements.txt
-```
+此外，Globe 中还包括 ui、workspace 和系统类型常量。
 
+## GUI
 
-## 文件结构及说明
+GUI 相关整体移到了 gui 文件，并且整理了一下，变量名改动较大，详见 CHANGELOG 文件。
 
-文件结构应该是这样的:
-```
-project/
+field 指的是带有提示的类（HintEntry、HintText，在 widget 中，即原有的 clickentry 和 clicktext）。现在提示会显示为灰色。HintEntry 增加了获取其内容的方法 HintEntry.content()。
 
-    __pycache__
-    template
-    dependency
-    figures
-    requirements.txt
-    function.py
-    inkscape_control.py
-    main.py
-    special_label.py
-    template.svg
-```
-* dependency文件夹用来放置和存储需要放在LaTex导言区(preamble)的模版,示例:
+Tk 的组件结构有点恶心，每个组件没有名字，直接用类型和编号命名，因此全局变量使用了自定义的一个字典 Globe.ui，在 gui 的第 90 行。可以通过 ui 中的引用较为方便地在其他地方修改组件，cget 方法可以取得值，configure 方法可以设定值。
 
-```
-\usepackage{import}
-\usepackage{float}
-\usepackage{pdfpages}
-%\usepackage{transparent}
-\usepackage{xcolor}
+## 工作区
 
-\newcommand{\incfig}[1]{%
-    \def\svgwidth{\columnwidth}
-    \import{./figures/}{#1.pdf_tex}
-}
-%\pdfsuppresswarningpagegroup=1
-%在中文的ctex被xelatex编译的环境下注释掉的项会出错;但是如果你使用pdflatex可以加上.
-%程序会自动给你创建(如果没有的话)图片存放目录figures.
-```
-* template文件夹用来放置和存储出现在LaTex主体中的模版,示例:
-```
-\begin{figure}[ht]
-    \centering
-    \incfig{键入图片标题...}
-    \caption{键入图片标题...}
-    \label{fig:键入图片标题...}
-\end{figure}
-```
-* figures用来存储点击create之后生成的图片.
-* function.py是主要的函数文档.
-* inkscape_control.py主要是控制inkscape的函数文档.
-* main.py是主程序.
-* special_label.py是特殊label类,点击或者编辑都会自动清空提示文本.(function.py中含有特殊text类,定义如上)
-* template.svg是默认svg模版.
+在文件菜单里可以设置工作路径。
+
+Globe.workspace 中 'root' 可以取得工作路径，当然用 os 模块更方便，而 'sub' 中则是使用的子文件夹（现在只有 figures）。储存的都是字符串而非 Path 对象。
+
+## 蓝图
+
+原有的功能被转化为“内置的操作”，用$标明，预留了导入外部代码的可能。蓝图类中的三个生成用的方法都需要一个解包的字典做参数，现在略微有些混乱，但将来可以扩展，实现多变量的代码片段生成。
+
+生成要素 factor 相关的方法（原来 beautify 的扩展，都在 util.StrUtil 中）：
+
+- caption，图片标题
+- fileName，文件名
+- label，引用（\ref）用标签（\label）
+
+执行宏的方法：
+
+- inkscape
+
+## 遗留问题和想法
+
+- 更好地利用文件
+  - 可以实现保存上次的工作路径，也许可以借助工作区的导入导出。VSCode 的工作区很强大，也许可以给我们提供一些参考。
+  - 可以实现导入、导出蓝图。把一个蓝图转换成 JSON 应该比较好实现。
+- GUI
+  - 目前蓝图和 GUI 的配合还没有完全实现，也许可以实现将文本框中的内容保存成蓝图
+  - 多变量（variable）。目前有一个变量输入框（HintEntry），只能输入一个变量，但代码片段中可能用到多个变量，因此或许可以考虑增加下拉选择框一类的组件，实现多变量。
+  - 布局。目前使用 place，调参很麻烦，而且显示效果也不太稳定，也许可以换用 pack？用 Frame 嵌套配合 pack 应该可以复原现在的布局。
+- 自动复制
+  - 现在自动复制自动开启，也许可以加个开关
+  - keyboard 的 suppress 会引起中文输入法的问题。不知道在 Mac 上用 pynput 有没有可能实现 suppress。
+  - 也许可以借助工作区/蓝图实现自定义快捷键，两个包都能将字符串转化成快捷键组合。
+- 外部代码：也许可以允许蓝图执行外部导入的代码？
+- 文件已存在：如果文件已存在，当前 inkscape_control.create() 会直接退出。也许可以增加一个重命名的方法。
+
+## wg路线:(2020-05-02)
+
+- 鉴于已经初步成型,分化的可能性越来越大,为避免不同分支出现冲突先记录下自己的优先打算.
+- 这两周我的重点在inkscape线程的处理.
+- 希望能实现在操作Inkscape时,按快捷键可以触发外部窗口输入代码片段,并且在退出时自动粘贴到鼠标所在位置,使Inkscape极佳的与latex互动而不需要再切换到外部文本编辑.至于这一条的必要性,我想inkscape的文本插入烂到家的表现已经说明了一切.
+  - 希望能实现图片的复制粘贴自动化操作,提高作图效率.
+- 优先级较低的操作:
+  - 希望在gui中集成目录下svg的显示,并创建edit按钮,免去查重和来回切换目录的麻烦.这将间接解决[遗留问题和想法](#遗留问题和想法)的最后一条.
+  - 希望实现“蓝图”中图片标题和依赖区的同步出现,这将在极小的一部分实现与gui的配合.详细的说,是导入(图片)片段或者依赖区之后,另外一者能同步刷新.
+  - 另外, 我也将试图解决上面问题中的其他方面,但是优先级更低.
 
 
-## 详细的代码说明:
-
-### special_label.py
-
-摘自个人的计算器作业(所以出现奇怪的expression不要奇怪).
-主要是利用定义的label类,可以显示提示文字,而无论是鼠标点击还是键盘聚焦都会自动删除提示文字.
-
-### function.py
-
-这是主要的函数文档.
-
-* myglobal.这是为了几个文档共享一个全局变量k创造的函数;k的作用是控制鼠标点击或者键盘聚焦都会自动删除提示文字,而且只会在非依赖区(导言区)运行一次,防止删除有用内容.
-* clicktext.是类似于上面的label的类,方法见源码.
-* clean.清空内容
-* callback.按钮触发的主要控制函数.
-* latex_template.模版生成器,其他(不光图片)可以参考.
-* beautify.防止用户输入的标题不合法,进行自动处理.
-* menucallback.菜单栏控制.
-### main.py
-这是主程序.
-
-* figpath是找到当前py的运行目录.
-* save_dir部分放置figures目录不存在
-* var是entry上的文字,varr是标题显示的文字.
-* text是模版生成区,最好有良好的可修改性;show_dependency是导言区展示区,修改性不能太好.
-
-### inkscape_control.py
-
-当点击"create"按钮后,在project的figures中创建以用户输入的标题为文件名的svg.
-
-## 使用说明
-
-首先保证你确实能够从命令行启动inkscape.测试一下,在命令行输入:
-```
-inkscape 
-```
-如果可以的话直接
-```
-python3 main.py
-```
-就可以运行程序了.见图.
-
-![Alt text](/screenshots/manual.png)
-
-需要注意的是,还没有加入inkscape的自动保存机制,所以在编辑完svg后要手动保存成pdf+tex格式,否则latex不会识别你的图片. 
-![Alt text](/screenshots/save_manual.jpg)
-
-## 遗留的问题和建议
-
-导言区
-
-```
-\usepackage{import}
-\usepackage{float}
-\usepackage{pdfpages}
-%\usepackage{transparent}
-\usepackage{xcolor}
-
-\newcommand{\incfig}[1]{%
-    \def\svgwidth{\columnwidth}
-    \import{./figures/}{#1.pdf_tex}
-}
-```
-
-中的路径是./figures;然而tex文档几乎不可能和py放在同一目录下,所以是否有什么办法动态修改这个figures目录?或者实在不行就把figures文件夹的路径展示出来?
-
-Python用快捷键操作剪贴板并把字符串原地替换这个功能跨平台是在难度太大,Mac上是要辅以swift和O-C才能使用的,而这几乎不可能(完全不可能)拓展到Windows机器上,所以我采用了这种外部窗口控制做法,而不是快捷键的做法.
-
-另外这种做法也有它的优点:它可以有多种扩展,不光可以控制图片的模版生成;实际上,我们完全可以把它做成ltex的代码仓库!
-
-还有一个缺点就是open_file和save_file没有设置默认路径,如果设置默认路径的话会舒服很多,这些细节我先留下来“接力”解决吧.
