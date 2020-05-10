@@ -1,0 +1,54 @@
+\documentclass[AutoFakeBold,twoside]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage[colorlinks,
+            linkcolor=red,
+            anchorcolor=blue,
+            citecolor=green
+            ]{hyperref}
+%\usepackage{pgf,tikz}
+\usepackage{colortbl}
+\usepackage{framed}
+\usepackage{enumerate}
+\usepackage{showkeys} % easy to line label and content
+%\usetikzlibrary{arrows,shapes,chains}
+\newtheorem{Thm}{Theorem}[subsection]
+\newtheorem{Axi}{Axiom}[subsection]
+\newtheorem{Lem}{Lemma}[subsection]
+\newtheorem{Prop}{Proposition}[subsection]
+\newtheorem{Cor}{Corollary}[subsection]
+\newtheorem{Def}{Definition}[subsection]
+\newtheorem{Exa}{Example}[subsection]
+\newtheorem*{pro}{Proof}
+\newtheorem*{sol}{Solution}
+\newtheorem*{Rmk}{Remark}
+\newtheorem*{Not}{Note}
+\newtheorem{Pro}{Problem}[subsection]
+
+\usepackage{xeCJK} 
+%\setCJKmainfont{AR PL UMing CN} % the font will work on every ubuntu but it's ugly
+\usepackage{import}
+\usepackage{float}
+\usepackage{pdfpages}
+%\usepackage{transparent}
+\usepackage{xcolor}
+
+\newcommand{\incfig}[1]{%
+    \def\svgwidth{\columnwidth}
+    \import{./figures/}{#1.pdf_tex}
+}
+%\pdfsuppresswarningpagegroup=1
+
+\begin{document}
+\begin{figure}[ht]
+    \centering
+    \incfig{sdfa-a}
+    \caption{Sdfa a}
+    \label{fig:sdfa-a}
+\end{figure}
+	
+\end{document}
+

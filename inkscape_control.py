@@ -3,9 +3,16 @@
 
 import os
 import subprocess
+import threading
 from pathlib import Path
 from shutil import copy
 from appdirs import user_config_dir
+
+import logging as log
+
+from globe import Globe as globe
+from util import StrUtil as strutil
+import workspace
 
 user_dir = Path(user_config_dir("project", "ww"))
 if not user_dir.is_dir():
@@ -21,9 +28,18 @@ if not template.is_file():
     copy(source, destination)
 
 def inkscape(path):
-    subprocess.Popen(['inkscape', str(path)])
+    log.info("Inkscape function started")
 
-def create(title, root):
+    processOpen = subprocess.Popen(['inkscape', str(path)])
+    log.info("Opening file")
+
+    processOpen.wait()
+    log.info("Inkscape process terminated")
+
+    subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
+    log.info("Export to pdf_tex process and Inkscape function terminated")
+
+def create(factor):
 #     """
     # Creates a figure.
 
@@ -50,18 +66,25 @@ def create(title, root):
     Second argument is the figure directory.
 
     """
-    title = title.strip()
-    file_name = title.replace(' ', '-').lower() + '.svg'
-    figures = Path(root).absolute()/'figures'
-    if not figures.exists():
-        figures.mkdir()
+    workspace.sub('figures')
 
-    figure_path = figures / file_name
+    log.debug("File name without extension " + factor['fileName'])
+    file_fullname = factor['fileName'] + '.svg'
+    log.debug("File name " + file_fullname)
 
-    # If a file with this name already exists, append a '2'.
+    figures_dir = Path(globe.workspace['sub']['figures'])
+
+    figure_path = figures_dir / file_fullname
+
+    # If a file with this name already exists, quit
+    #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里
     if figure_path.exists():
-        print(title + ' 2')
-        return
-    copy(str(template), str(figure_path))
+        log.warning("{} already exists. Quit.".format(str(figure_path)))
+        return 
+    else:
+        copy(str(template), str(figure_path))
+        log.info("Template copied")    
+    
+    log.info("Starting Inkscape")
     inkscape(figure_path)
-
+    return
