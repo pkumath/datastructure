@@ -21,6 +21,11 @@ def cwd(path = None):
     log.debug("CWD: %s" % os.getcwd())
     workspace['root'] = str(dir_root)
 
+    if os.path.isdir(os.getcwd()+os.path.sep+ 'figures'):
+        pass
+    else:
+        os.mkdir('figures')
+
     """ if 'root' in globe.ui:
         globe.ui['root'].title(' '.join((globe.ui['root'].title(), '@', str(dir_root.base)))) """
     
