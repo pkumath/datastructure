@@ -142,7 +142,7 @@ xrdb ~/.Xresources
 
 然后重启X11.
 
-## 图片管理视窗
+  ## 图片管理视窗
 
 右侧是图片管理器.
 
@@ -150,7 +150,7 @@ xrdb ~/.Xresources
 
 另外,如果发现文件显示不全,请手动刷新.
 
-## 新增函数及文件说明
+  ## 新增函数及文件说明
 
 - demo.tex: 对于调用相关latex代码显示插图的示范.
 - edit_scroll_process.py: 通常被调用为svg_file
