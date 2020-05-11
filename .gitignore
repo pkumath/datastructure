@@ -154,7 +154,7 @@ xcuserdata/
 ### History and PDF ###
 .Rhistory
 .history
-.pdf
+*.pdf
 
 ### Vim ###
 # Swap
