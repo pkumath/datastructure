@@ -58,9 +58,6 @@ class Blueprint():
         else:
             log.error("External macro method not implemented") #TODO: 外部宏
             return
-        
-globe.blueprint = Blueprint()
-
 class FacMethod(): # 要素生成相关方法
     @staticmethod
     def find(facMethod, arg=None):
@@ -121,3 +118,16 @@ def default(): # 默认蓝图
 
     globe.blueprint = default_blueprint
     log.info("Default blueprint loaded")
+
+def show_blueprint():
+    if globe.blueprint == None:
+        log.critical("No blueprint loaded!")
+        return
+
+    text_dependency = globe.blueprint.dependency
+    if text_dependency == None: text_dependency = r"% No dependency"
+
+    field_dependency = globe.ui['field']['dependency']
+    field_dependency.hinting = False
+    log.debug(field_dependency.content)
+    field_dependency.content = text_dependency

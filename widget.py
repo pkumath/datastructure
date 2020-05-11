@@ -91,6 +91,15 @@ class HintText(tk.Frame):
             self.text.tag_add("hint", "1.0", "end")
             self.text.tag_config("hint", foreground="grey")
 
+    @property
+    def content(self):
+        return self.text.get('1.0', 'end')
+
+    @content.setter
+    def content(self, value):
+        self.text.delete('1.0', 'end')
+        self.text.insert('1.0', value)
+
     def on_click(self, event):
         """on_click
 

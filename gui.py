@@ -14,6 +14,7 @@ from globe import Globe as globe
 import widget
 import  edit_scroll_process as svg_file
 import workspace
+from blueprint import show_blueprint
 from util import StrUtil as strutil
 
 def init():
@@ -130,6 +131,8 @@ def init():
     }
 
     log.info("GUI initiated")
+
+    show_blueprint() #显示默认蓝图
 
     root.mainloop()
 
