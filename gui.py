@@ -109,7 +109,7 @@ def init():
         "field": {
             "variable": field_variable,
             "snippet": field_snippet,
-            "dependency": field_snippet,
+            "dependency": field_dependency,
             "list": field_list,
         },
         "label": {
