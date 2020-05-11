@@ -110,6 +110,7 @@ def init():
             "variable": field_variable,
             "snippet": field_snippet,
             "dependency": field_snippet,
+            "list": field_list,
         },
         "label": {
             "variable": label_variable,
@@ -119,6 +120,7 @@ def init():
             "clrsnip": btn_clrsnip,
             "clrdep": btn_clrdep,
             "inkscape": btn_inkscape,
+            "edit": btn_edit,
         },
         "menubar": menubar,
         "menu": {
