@@ -4,7 +4,7 @@
 import os
 import paste
 import subprocess
-import threading
+from multiprocessing import Process
 from pathlib import Path
 from shutil import copy
 from appdirs import user_config_dir
@@ -57,10 +57,10 @@ def inkscape(path):
     # )
     # l.start()
     processOpen.wait()
-    log.info("Inkscape process terminated")
+    log.info("Inkscape terminated")
 
     subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
-    log.info("Export to pdf_tex process and Inkscape function terminated")
+    log.info("Export to pdf_tex process and InkscapeProcess terminated")
 
 def create(factor):
 #     """
@@ -102,13 +102,13 @@ def create(factor):
     # If a file with this name already exists, quit
     #TODO: 查重工作应该放在paste中完成，也许可以将功能封装，放在util里
     if figure_path.exists():
-        inkscape(figure_path)
         log.warning("{} already exists. Edit but not create.".format(str(figure_path)))
-        return
+
     else:
         copy(str(template), str(figure_path))
         log.info("Template copied")
     
-        log.info("Starting Inkscape")
-        inkscape(figure_path)
-        return
+    log.info("Starting Inkscape")
+    process_inkscape = Process(target=inkscape, args=(figure_path,))
+    process_inkscape.start()
+    return
