@@ -79,11 +79,11 @@ def init():
     menu_file = tk.Menu(menubar, tearoff = False)
     menu_file.add_command(label = '切换工作路径',command = lambda : menu_callback('cwd',field_snippet,var_snippet,varr_snippet,field_list))
     menu_file.add_separator()
-    menu_file.add_command(label = '导入片段',command = lambda : menu_callback('open',field_snippet,var_snippet,varr_snippet))
+    menu_file.add_command(label = '导入片段',command = lambda : menu_callback('open',field_snippet,var_snippet,varr_snippet,field_list))
     menu_file.add_command(label = '导入依赖区',command = lambda : menu_callback('open',field_dependency,var_dependency,varr_dependency,field_list))
     menu_file.add_command(label = '退出',command = root.quit)
     menu_file.add_separator()
-    menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet))
+    menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet,field_list))
     menu_file.add_command(label ='保存依赖区',command = lambda : menu_callback('save',field_dependency,var_dependency,varr_dependency,field_list))
 
 
