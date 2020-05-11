@@ -150,3 +150,6 @@ static
 
 ### Xcode ###
 xcuserdata/
+
+.history
+.Rhistory
