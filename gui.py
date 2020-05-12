@@ -14,7 +14,7 @@ from globe import Globe as globe
 import widget
 import  edit_scroll_process as svg_file
 import workspace
-from blueprint import show_blueprint
+from blueprint import show_blueprint, export_blueprint, import_blueprint
 from util import StrUtil as strutil
 
 def init():
@@ -86,6 +86,9 @@ def init():
     menu_file.add_separator()
     menu_file.add_command(label ='保存片段',command = lambda : menu_callback('save',field_snippet,var_snippet,varr_snippet,field_list))
     menu_file.add_command(label ='保存依赖区',command = lambda : menu_callback('save',field_dependency,var_dependency,varr_dependency,field_list))
+    menu_file.add_separator()
+    menu_file.add_command(label = '导入蓝图',command = lambda : import_filedialog())
+    menu_file.add_command(label ='导出蓝图',command = lambda : export_filedialog())
 
 
     menu_help = tk.Menu(menubar, tearoff = False)
@@ -193,3 +196,24 @@ def cwd_select():
             workspace.cwd(cwdpath)
             tkmessagebox.showinfo('工作路径', '当前工作路径已切换至 {}'.format(os.getcwd()))
         else: log.warning("Selection cancelled.")
+
+def export_filedialog(kind='json'):
+        filename = tk.filedialog.asksaveasfilename(initialdir=os.getcwd(), filetypes=[
+            (kind.upper(), '*.%s'%kind),
+        ], )
+
+        if not (filename == ''):
+            if filename[-len(kind)-1:] != ".%s"%kind: filename += ".%s"%kind
+            export_blueprint(filename)
+        else:
+            log.info("Save cancelled.")
+
+def import_filedialog():
+        filename = tk.filedialog.askopenfilename(initialdir=os.getcwd(), filetypes=[
+            ('JSON', '*.json'),
+        ])
+
+        if not (filename == ''):
+            return_code = import_blueprint(filename)
+            if return_code ==-1:
+                tkmessagebox.showerror('导入失败', '{} 不是合法的蓝图文件。'.format(filename))
