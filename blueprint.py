@@ -58,6 +58,16 @@ class Blueprint():
         else:
             log.error("External macro method not implemented") #TODO: 外部宏
             return
+
+    def to_dict(self):
+        dict_blueprint = {
+        'variable': self.variable,
+        'dependency': self.dependency,
+        'factor': self.factor,
+        'snippet': self.snippet,
+        'macro': self.macro
+        }
+        return dict_blueprint
 class FacMethod(): # 要素生成相关方法
     @staticmethod
     def find(facMethod, arg=None):
@@ -129,5 +139,34 @@ def show_blueprint():
 
     field_dependency = globe.ui['field']['dependency']
     field_dependency.hinting = False
-    log.debug(field_dependency.content)
     field_dependency.content = text_dependency
+    log.debug(field_dependency.content)
+
+def export_blueprint(path):
+    if globe.blueprint == None:
+        log.critical("No blueprint loaded!")
+        return
+    
+    dict_blueprint = globe.blueprint.to_dict()
+    dict_blueprint['type'] = 'WW-BLUEPRINT'
+    log.debug(dict_blueprint)
+
+    with open(path, "w", encoding="utf-8") as file_blueprint:
+        json.dump(dict_blueprint, file_blueprint, ensure_ascii=False, indent=4)
+    
+    log.info("Blueprint exported at {}".format(path))
+
+def import_blueprint(path):
+    with open(path, "r", encoding="utf-8") as file_blueprint:
+        dict_blueprint = json.load(file_blueprint)
+
+    try:
+        if dict_blueprint.get('type') == 'WW-BLUEPRINT':
+            globe.blueprint = Blueprint(dict_blueprint)
+            show_blueprint()
+        else:
+            return -1
+    except:
+        return -1
+    else:
+        return 0
