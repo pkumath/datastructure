@@ -26,10 +26,8 @@ elif SYSTEM == "Windows":
 def open_editor(filename):
     if SYSTEM == "Darwin":
         subprocess.run([
-            'xterm',
-            '-geometry', '60x5',
-            '-name', 'popup-bottom-center',
-            '-e', "vim",
+            '/Applications/MacVim.app/Contents/MacOS/Vim',
+            '-fg',
             f"{filename}",
         ])
     elif SYSTEM == "Windows":
@@ -55,11 +53,14 @@ def open_vim():
 
     if SYSTEM == "Darwin":
         mouse = Controller()
+        time.sleep(0.1)
+        mouse.press(Button.left)
+        mouse.release(Button.left)
         keyboard_controller = keyboard.Controller()
-        time.sleep(0.2)
+        time.sleep(0.1)
         keyboard_controller.press(keyboard.Key.esc)
         keyboard_controller.release(keyboard.Key.esc)
-        time.sleep(0.2)
+        time.sleep(0.1)
         keyboard_controller.press('t')
         keyboard_controller.release('t')
 
