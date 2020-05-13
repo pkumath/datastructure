@@ -4,11 +4,9 @@
 #北京大学数学科学学院，jnwengang@pku.edu.cn
 import os
 import time
-
+#如果程序不能正常运行（比如崩溃），会返回非零值；如果正常运行，就会返回零。
 a = 4
 while a != 0:
-   try:
-      a = os.system("python3 main.py")
-      print(a)
-   except Exception as e:
-      print("Exception occured:")
+
+   a = os.system("python3 main.py")
+   print(a)
