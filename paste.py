@@ -9,7 +9,6 @@ import tempfile
 import os
 
 import logging as log
-from pynput.mouse import Button, Controller
 from globe import Globe as globe
 import inkscape_control
 from util import StrUtil as strutil
@@ -18,6 +17,7 @@ SYSTEM = globe.SYSTEM
 
 if SYSTEM == "Darwin":
     from pynput import keyboard
+    from pynput.mouse import Button, Controller
 elif SYSTEM == "Windows":
     import keyboard
     import mouse as w_mouse
