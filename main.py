@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import threading
-
+from multiprocessing import freeze_support
 
 import logging as log
 log.basicConfig(level=log.DEBUG, format='[%(levelname)s] %(message)s - %(module)s::%(funcName)s(%(lineno)d)')
@@ -15,6 +15,7 @@ import paste as autopaste
 
 
 if __name__ == '__main__':
+    freeze_support()
     blueprint.default() # 加载默认蓝图，最好在最前面执行
     workspace.cwd() # 加载默认工作路径，即 py 所在路径 #TODO 保存上次的工作路径？
         
