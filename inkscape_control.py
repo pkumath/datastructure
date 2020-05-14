@@ -64,7 +64,7 @@ def inkscape(path):
     if SYSTEM == "Darwin":
         os.system('/Applications/Inkscape.app/Contents/MacOS/inkscape '+ str(path)+ ' --export-file='+str(path.with_suffix(".pdf"))+' --export-latex')
     elif SYSTEM == "Windows":
-        subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
+        subprocess.Popen(['inkscape', str(path), '-o', str(path.with_suffix(".pdf")), '--export-latex'])
     log.info("Export to pdf_tex process and InkscapeProcess terminated")
 
 def create(factor):
