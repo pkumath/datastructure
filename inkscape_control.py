@@ -45,9 +45,12 @@ def inkscape(path):
     # hotkey = keyboard.HotKey(
     #     keyboard.HotKey.parse('<cmd>+u'),
     #     on_activate)
-
-    processOpen = subprocess.Popen(['inkscape', str(path)])
-    log.info("Opening file")
+    if SYSTEM == "Darwin":
+        processOpen = subprocess.Popen(['/Applications/Inkscape.app/Contents/MacOS/inkscape', str(path)])
+        log.info("Opening file")
+    elif SYSTEM == "Windows":
+        processOpen = subprocess.Popen(['inkscape', str(path)])
+        log.info("Opening file")
     # with keyboard.GlobalHotKeys({'<cmd>+i': paste.open_vim}) as hotkey:
     #     hotkey.join()
     # l = keyboard.Listener(
@@ -58,8 +61,10 @@ def inkscape(path):
     # l.start()
     processOpen.wait()
     log.info("Inkscape terminated")
-
-    subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
+    if SYSTEM == "Darwin":
+        os.system('/Applications/Inkscape.app/Contents/MacOS/inkscape '+ str(path)+ ' --export-file='+str(path.with_suffix(".pdf"))+' --export-latex')
+    elif SYSTEM == "Windows":
+        subprocess.Popen(['inkscape', str(path), '-A', str(path.with_suffix(".pdf")), '--export-latex'])
     log.info("Export to pdf_tex process and InkscapeProcess terminated")
 
 def create(factor):

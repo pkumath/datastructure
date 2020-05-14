@@ -67,7 +67,7 @@ def open_vim():
         mouse.press(Button.left)
         mouse.release(Button.left)
 
-        with keyboard_controller.pressed(keyboard.Key.ctrl):
+        with keyboard_controller.pressed(keyboard.Key.cmd):
             keyboard_controller.press('v')
             keyboard_controller.release('v')
     elif SYSTEM == "Windows":
@@ -128,7 +128,7 @@ def trigger():
         #     on_activate)
         #Mac无法两个快捷键同时运行
         with keyboard.GlobalHotKeys({'<cmd>+u': on_activate,
-                                     '<cmd>+i': open_vim}) as hotkey:
+                                     '<cmd>+y': open_vim}) as hotkey:
             hotkey.join()
         l = keyboard.Listener(
             on_press=for_canonical(hotkey.press),
