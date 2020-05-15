@@ -4,13 +4,16 @@
 # 北京大学数学科学学院，jnwengang@pku.edu.cn
 import os
 from pathlib import Path
-from globe import Globe as globe
+import platform
 import logging as log
 import requests
+import tkinter as tk
+import tkinter.messagebox as messagebox
 from appdirs import *
 from multiprocessing import Process
 import time
 
+SYSTEM = platform.system()
 log.basicConfig(level=log.DEBUG, format='[%(levelname)s] %(message)s - %(module)s::%(funcName)s(%(lineno)d)')
 
 user_dir = Path(user_config_dir("project", "ww"))
@@ -60,13 +63,14 @@ def readme1(setup_path):
         pass
         log.info('Readme downloaded.')
     else:
-        print('\n检测到您是第一次使用，正在初始化！\n')
         r = requests.get(pdf_url)
         with open(str(readme), 'wb') as f:
             f.write(r.content)
 
         log.warning('Readme downloading...')
+        messagebox.showinfo('基本组件安装成功！','请仔细阅读安装指南并重启软件')
         os.system('open '+ str(readme).replace(' ','\ '))
+        raise KeyError
 
     if software_path.exists():
         pass
@@ -79,7 +83,6 @@ def readme0(setup_path):
     software_path = setup_path / 'project'
     manual_path = software_path / 'manual.pdf'
     flag_path = data_dir / 'flag.txt'
-    messagebox_path = software_path / 'messagebox.py'
 
     readme = data_dir / 'try.pdf'
 
@@ -87,26 +90,29 @@ def readme0(setup_path):
         pass
         log.info('Readme downloaded.')
     else:
-        process_messagebox = Process(target=other_tk, args=(messagebox_path,))
-        process_messagebox.start()
+        messagebox.showinfo('来自latex模版管理器','检测到您是第一次使用，正在初始化！正在安装和检测运行环境，请耐心等待，大概需要几分钟，中途可能卡顿，需要联网.点击ok按钮进行安装.如果一直没有成功，尝试从命令行启动看错误提示。')
 
 
 
 # 如果程序不能正常运行（比如崩溃），会返回非零值；如果正常运行，就会返回零。
 
-SYSTEM = globe.SYSTEM
-
 log.warning('安装需要连接网络！')
 setup_path = Path('/Applications')
 
 if SYSTEM == "Darwin":
+    root = tk.Tk()
+    root.withdraw()
+
     readme0(setup_path)
     gvim = Path('/Applications/MacVim.app')
 
     readme1(setup_path)
     readme2(setup_path)
-
-    os.chdir('/Applications/project')
+    try:
+        os.chdir('/Applications/project')
+    except:
+        messagebox.showinfo('错误报告','检测到您没有安装成功！请阅读安装指南！')
+        raise KeyError
 
     log.info('Check requirements...')
     os.system('pip install -r requirements.txt')
