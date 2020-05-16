@@ -6,6 +6,7 @@ import paste
 import subprocess
 from multiprocessing import Process
 from pathlib import Path
+import tkinter.messagebox as messagebox
 from shutil import copy
 from appdirs import user_config_dir
 
@@ -62,7 +63,14 @@ def inkscape(path):
     processOpen.wait()
     log.info("Inkscape terminated")
     if SYSTEM == "Darwin":
-        os.system('/Applications/Inkscape.app/Contents/MacOS/inkscape '+ str(path)+ ' --export-file='+str(path.with_suffix(".pdf"))+' --export-latex')
+        version = os.popen('/Applications/Inkscape.app/Contents/MacOS/inkscape --version').readlines()
+        if '4035a4f' not in str(version):
+            messagebox.showinfo('警告！', 'inkscape版本可能不兼容！导致并没有生成latex能识别的文件，请检查是否为1.0 (4035a4f, 2020-05-01)')
+
+        inkscape_name = '/Applications/Inkscape.app/Contents/MacOS/inkscape'
+        subprocess.Popen([inkscape_name, str(path), '-o', str(path.with_suffix(".pdf")), '--export-latex'])
+        #else:
+            #os.system('/Applications/Inkscape.app/Contents/MacOS/inkscape '+ str(path)+ ' --export-file='+str(path.with_suffix(".pdf"))+' --export-latex')
     elif SYSTEM == "Windows":
         subprocess.Popen(['inkscape', str(path), '-o', str(path.with_suffix(".pdf")), '--export-latex'])
     log.info("Export to pdf_tex process and InkscapeProcess terminated")

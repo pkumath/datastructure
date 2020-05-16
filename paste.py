@@ -128,7 +128,7 @@ def trigger():
         #     on_activate)
         #Mac无法两个快捷键同时运行
         with keyboard.GlobalHotKeys({'<cmd>+u': on_activate,
-                                     '<cmd>+8': open_vim}) as hotkey:
+                                     '<cmd>+0': open_vim}) as hotkey:
             hotkey.join()
         l = keyboard.Listener(
             on_press=for_canonical(hotkey.press),

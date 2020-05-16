@@ -52,12 +52,12 @@ def readme2(setup_path):
 
 def readme1(setup_path):
     #安装提示和指南
-    pdf_url = 'http://39.107.57.131/wp-content/uploads/2020/05/常微分方程-作业四-2020年4月15日-1.pdf'
+    pdf_url = 'http://39.107.57.131/wp-content/uploads/2020/05/安装指南.pdf'
     software_path = setup_path /'project'
     manual_path = software_path  /'manual.pdf'
     flag_path = data_dir/ 'flag.txt'
 
-    readme = data_dir/ 'try.pdf'
+    readme = data_dir/ '安装指南.pdf'
 
     if readme.exists():
         pass
@@ -84,7 +84,7 @@ def readme0(setup_path):
     manual_path = software_path / 'manual.pdf'
     flag_path = data_dir / 'flag.txt'
 
-    readme = data_dir / 'try.pdf'
+    readme = data_dir / '安装指南.pdf'
 
     if readme.exists():
         pass
