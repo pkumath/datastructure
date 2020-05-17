@@ -35,6 +35,7 @@ def open_editor(filename):
         subprocess.run([
             'gvim',
             f"{filename}",
+            '+45'
         ])
 
 
