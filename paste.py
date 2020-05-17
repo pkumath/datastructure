@@ -229,3 +229,4 @@ def trigger():
     elif SYSTEM == "Windows":
         keyboard.add_hotkey('ctrl+u', on_activate, )  # suppress=True)
         keyboard.add_hotkey('ctrl+alt+i', open_vim)
+        keyboard.add_hotkey('ctrl+j', open_tiny_latex)
