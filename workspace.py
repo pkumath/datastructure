@@ -2,12 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+from appdirs import user_config_dir
 import json
 import os
 import logging as log
 
 from globe import Globe as globe
 workspace = globe.workspace
+
+user_dir = Path(user_config_dir("project", "ww"))
+if not user_dir.is_dir():
+    user_dir.mkdir(parents=True)
 
 def cwd(path = None):
     '''设置工作路径
@@ -42,7 +47,8 @@ def sub(name):
     workspace['sub'][name] = str(dir_sub)
 
 def load_history():
-    history_path = Path(__file__).parent / ".history"
+
+    history_path = Path(user_config_dir("project", "ww")) / ".history"
     if not history_path.is_file():
         return default_history()
     
@@ -65,7 +71,7 @@ def default_history():
     return cwd
 
 def set_history(path):
-    history_path = Path(__file__).parent / ".history"
+    history_path = Path(user_config_dir("project", "ww")) / ".history"
     try:
         assert Path(path).is_dir()
         with open(str(history_path), "w", encoding="utf-8") as history_json:
