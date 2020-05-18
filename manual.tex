@@ -1,0 +1,622 @@
+\documentclass[AutoFakeBold,letterpaper,12pt,hidelinks]{article}
+\usepackage{subcaption,enumerate,algorithm,algorithmic,graphicx,float}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{import}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{xeCJK}
+\usepackage{esint}
+%\setCJKmainfont{AR PL UMing CN} % the font will work on every ubuntu but it's ugly
+\usepackage{cite}
+\usepackage[colorlinks,
+            linkcolor=red,
+            anchorcolor=blue,
+            citecolor=green
+            ]{hyperref}
+            
+%\usepackage{pgf,tikz}
+\usepackage{colortbl}
+\usepackage{framed}
+\usepackage{enumerate}
+%\usepackage{showkeys} % easy to line label and content
+%\usetikzlibrary{arrows,shapes,chains}
+\newtheorem{Thm}{Theorem}[subsection]
+\newtheorem{Axi}{Axiom}[subsection]
+\newtheorem{Lem}{Lemma}[subsection]
+\newtheorem{Prop}{Proposition}[subsection]
+\newtheorem{Cor}{Corollary}[subsection]
+\newtheorem{Def}{Definition}[subsection]
+\newtheorem{Exa}{Example}[subsection]
+\newtheorem*{pro}{Proof}
+\newtheorem*{sol}{Solution}
+\newtheorem*{Rmk}{Remark}
+\newtheorem*{Not}{Note}
+\newtheorem{Pro}{Problem}[subsection]
+% Don't indent paragraphs, leave some space between them
+\usepackage{parskip}
+
+% Hide page number when page is empty
+\usepackage{emptypage}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{pdfpages}
+%\usepackage{transparent}
+\usepackage{xcolor}
+
+\newcommand{\incfig}[1]{%
+    \def\svgwidth{\columnwidth}
+    \import{./figures/}{#1.pdf_tex}
+}
+%\pdfsuppresswarningpagegroup=1
+%在中文的ctex被xelatex编译的环境下注释掉的项会出错;但是如果你使用pdflatex可以加上.
+%程序会自动给你创建(如果没有的话)图片存放目录figures.
+
+%\pdfsuppresswarningpagegroup=1
+
+\usepackage{mathrsfs}
+\title{\LaTeX{} 模版生成程序使用手册\\\LaTeX{} Template Generator Doc\\期末大作业小组报告}
+\begin{document}
+
+\author{温刚\footnote{jnwengang@pku.edu.cn},王奕轩\footnote{tom-yixuan\_wang@pku.edu.cn}
+  }
+\date{\today}
+\maketitle
+
+\tableofcontents
+\section{需求分析}%
+
+用\LaTeX{}编辑数学论文和其他理科材料已经成为科研工作者的一种必备技能.无论是markdown还是word都远不及\LaTeX{}编辑数学公式来的快和实在.然而,用\LaTeX{}插入图片和很多固定格式的组件长久以来让人不满,而且阻碍所有人使用\LaTeX{}进行编辑(这导致很多数学论文丑陋不堪).
+
+而对于插入的图片,同学们往往追求方便使用includegraph命令,这使图片难以调整,而且很难将\LaTeX{}的强大功能与图片联动起来.想想Stein的数学书的插图吧!尤其是Complex analysis,他的图片就像是用tikz绘出的一样——然而,我们可以用inkscape,一款开源的却非常强大的矢量图绘制软件达到同样的效果,而且还将结合vim与\LaTeX{}弥补二者的缺点.
+
+如果您想查看用此种方法得到的图片效果,请参考http://39.107.57.131/?p=204阅览温刚的数学分析笔记插图;或者http://39.107.57.131/?p=509阅览温刚的实变函数笔记插图.将此课堂笔记与您的插图做做笔记,看您是否能一边记着随堂笔记一边达到这样的效果?
+
+
+\begin{figure}[H]
+    \centering
+    \incfig{一起latex}
+    \caption{一起\LaTeX{}!}
+    \label{fig:一起latex}
+\end{figure}
+
+\section{设计}%
+
+本软件本学期由于设定了跨平台的目标,设计过程较为曲折,设计方向多次更改,现按时间顺序说明设计思路及其变动.
+
+学期初,设定了使用快捷键插入代码片段和打开inkscape的小目标,此时还没有对gui有什么指望.
+
+经过第一轮尝试,Mac端由于权限问题无法使用keyboard进行按键监听,退而求其次,温刚设计了软件主窗口的雏形.或者说,此时软件主窗口就已经做好了,我们期望用户使用外部窗口实现交互,而不是快捷键.
+
+第二轮尝试,王奕轩重构了gui代码,完善了项目的代码架构,实现了windows的快捷键操作,并添加新的功能:蓝图.详细见文档内部.
+
+第三轮尝试,温刚发现新的模块pynput在mac上运行正常,于是实现了Mac上的按键监听.此时温刚的方向主要是inkscape的扩展.在此阶段,将inkscape扩展到了能和软件互联互通的地步.然而,Inkscape的文本插入多有弊端.基于x11的inkscape在Mac上甚至不能输入中文,因此,此时设计通过xterm与剪贴板交互重构inkscape的文本插入操作.
+
+第四轮尝试,王奕轩修补了bug并继续向蓝图和windows方向分化,另外将inkscape已经在Mac实现上的功能迁移到了windows上.与此同时,王奕轩使用的gvim给温刚以启发,基于xterm设计的重构的文本框换为了macvim.
+
+打包阶段,windows可以正常打包,对于Mac,温刚写了安装器start.py.
+
+第五轮尝试,软件已经基本成形,并在github主页发布了若干release.详情见下方.
+
+\section{使用说明}%
+
+\subsection{初级教学视频网址}%
+
+http://39.107.57.131/?p=593
+
+如果视频加载过慢,您可以直接从网盘下载:
+
+链接: https://pan.baidu.com/s/1iwLiezpJuhX5rDJNy2qEYA  密码: qwh6
+
+注意到本视频所讲解的版本是0.0.2,如果此资源失效,请下载最新的release资源.
+
+Windows端的初级使用与mac端大同小异.但是安装过程有较大差别,请跳过前面的安装部署过程.
+
+\subsection{快捷键声明}%
+
+\subsubsection{Windows}%
+
+\begin{itemize}
+	\item ctrl+u:将选定的文字格式化为插入的\LaTeX{}图片代码,原地替换;并将此代码放入剪贴板.另外,自动打开inkscape,在工作路径下的figures文件夹中生成对应的图片.
+
+	\item  ctrl+alt+i:这将弹出一个小型的gvim窗口,您在里面输入任何公式,退出后此公式将放入您的剪贴板.如果您在inkscape中工作,此公式将自动出现在您鼠标指定的位置.
+
+	\item  ctrl+j:这将弹出一个含有完整\LaTeX{}导言和代码的微型gvim窗口,您在里面编辑并退出后内容将自动放入剪贴板.当然如果您之前有配置过vim使其可以实现\LaTeX{}预览(例如vim-latex-preview插件等) ,也可以生效.
+
+	注意,以上弹出的gvim文档都是临时文件,使用后会自动清除.
+
+\end{itemize}
+
+\subsubsection{Mac}%
+
+\begin{itemize}
+	\item cmd+u:与windows的ctrl+u功能相同.
+	\item cmd+0:u:与windows的ctrl+alt+i功能相同,只不过使用macvim代替gvim.
+
+	\item  cmd+j:与windows的ctrl+j功能相同.说明同上.
+\end{itemize}
+
+\begin{Rmk}\rm
+	Mac端的vim配置可以从网盘下载:
+
+	链接: https://pan.baidu.com/s/1KygY-6Kd0-kayqT6fZ57YQ  密码: dbq9
+
+	下载之后将.vimrc与.vim放在主目录即可.
+\end{Rmk}
+\subsection{软件界面结构}%
+
+\begin{figure}[H]
+    \centering
+    \incfig{软件界面结构}
+    \caption{软件界面结构}
+    \label{fig:软件界面结构}
+\end{figure}
+先按从左到右,从上到下的顺序依次说明各个组件的作用.
+
+\begin{itemize}
+	\item 清空依赖区:即清空最下方米黄色的区域的所有文字,而这些文字显示的是您应该在\LaTeX{}导言区插入的内容.
+	\item  清空片段:即清空上方米黄色的区域的所有文字,而这些文字显示的是您想插入的代码片段.
+
+	\item 图片名称:您在此键入您想创建的图片名称.
+	\item  生成片段并复制:程序对您的图片名称进行格式化和\LaTeX{}语法错误过滤,生成可以直接使用的片段并在上方米黄色区域展示.同时,展示的内容也将放入您的剪贴板.
+
+	\item  执行宏:使用您在文本框中输入的图片名字生成图片.
+
+	\item 经过处理的图片文件名:展示文件名.
+
+	\item  编辑已有图片:下方的白色框中会显示您在当前工作路径下已经有的图片,选定后点击此按钮,将自动打开inkscape对其进行编辑.
+
+	\item 左上方米黄色框:片段区.
+
+	\item  右方白色框:展示当前目录下已有的图片文件.
+
+	\item  左下方米黄色框:导言区(依赖区).
+	\item 删除此文件:彻底删除您选定的svg和附带的pdf,pdf\_tex.毫不留情,不会放入回收站,所以如果没有备份就再也找不回来了.
+
+	\item 更新文件列表:如果您发现右方白色框没有展示全部的图片,点击此按钮刷新缓存.
+
+	\item 控制台窗口:用于调试和输出日志,操作历史和错误报告.
+\end{itemize}
+\subsection{软件菜单栏结构}%
+
+\begin{figure}[H]
+    \centering
+    \incfig{菜单栏}
+    \caption{菜单栏}
+    \label{fig:菜单栏}
+\end{figure}
+蓝图功能尚在开发.其实现可以类比vscode的json配置.
+\section{编码实现}%
+
+\subsection{第三方软件}%
+
+Inkscape和gVim都提供命令行接口。
+
+\paragraph{Inkscape}
+
+\begin{verbatim}
+$ inkscape "foo.svg" 
+# 打开SVG
+$ /Applications/Inkscape.app/Contents/MacOS/inkscape "foo.svg" \
+	--export-file='foo.pdf' --export-latex 
+# (MacOS)转换为PDF_TEX.这是inkscape1.1dev版本,不稳定;现在api可能已经更改.
+$ /Applications/Inkscape.app/Contents/MacOS/inkscape "foo.svg" -o \
+	'foo.pdf' --export-latex
+#(MacOS)转换为PDF_TEX.这是inkscape1.0 (4035a4f, 2020-05-01) 版本,也是我们采用的
+稳定版本.
+
+$ inkscape "foo.svg" -o 'foo.pdf' --export-latex 
+# (Windows)转换为PDF_TEX
+\end{verbatim}
+
+\paragraph{gVim \& MacVim}
+
+\begin{verbatim}
+$ /Applications/MacVim.app/Contents/MacOS/Vim -fg "bar.tex" 
+# (MacOS)用MacVim打开一个文件,并将线程锁定到当前PID.
+$ gvim "bar.tex" # (Windows)用gVim打开一个文件
+\end{verbatim}
+
+\subsection{第三方包}
+\paragraph{appdirs}
+
+用于获取特殊的应用文件夹路径，跨平台通用。便于存取一些内部数据。
+
+\begin{verbatim}
+appdirs.user_config_dir("Project", "Author") # 设置文件夹
+appdirs.user_data_dir("Project", "Author") # 数据文件夹
+\end{verbatim}
+
+\paragraph{pyperclip}
+
+用于读取和写入剪贴板。
+
+对于开启了剪贴板管理器功能的Windows系统，剪贴板中数据存储在栈中，复制为压栈，粘贴为获取栈顶，因此复制空字符串不能起到清空剪贴板效果。
+
+\begin{verbatim}
+pyperclip.copy("Foo") # 复制到剪贴板
+pyperclip.copy('') # (MacOS)清空剪贴板
+pyperclip.paste() # 获取剪贴板内容
+\end{verbatim}
+
+\paragraph{requests}
+
+提供更简单的网络访问。用于下载在线安装指南,MacOS还用于请求下载必要的安装组件和配置。
+
+\begin{verbatim}
+requests.get("https://foo.com/bar.pdf") # HTTP GET
+\end{verbatim}
+
+\paragraph{keyboard, mouse, pynput}
+
+提供键盘和鼠标的监听和模拟操作。
+
+在Windows上使用keyboard和mouse，它们的代码比较简洁。pynput在Windows上与中文输入法冲突。
+
+\begin{verbatim}
+keyboard.send("F8") # 模拟键盘按下—抬起事件
+keyboard.add_hotkey('ctrl+alt+i', func) # 监听某一按键组合
+mouse.click("left") # 模拟鼠标左键单击事件
+\end{verbatim}
+
+keyboard和mouse不兼容MacOS，因此使用pynput。pynput可以正确处理MacOS的授予权限操作。pynput的实现类似于进程操作。
+
+\begin{verbatim}
+with pynput.keyboard.GlobalHotKeys({'<cmd>+u': fun1, '<cmd>+8': fun2}) as hotkey:
+    hotkey.join()
+# 绑定多个按键组合
+def for_canonical(f):
+    return lambda k: f(listener.canonical(k))
+listener = pynput.keyboard.Listener(
+            on_press=for_canonical(hotkey.press),
+            on_release=for_canonical(hotkey.release),
+        )
+listener.start()
+# 监听hotkey按下—抬起动作
+
+with pynput.keyboard.Controller.pressed(pynput.keyboard.Key.cmd):
+    pynput.keyboard.Controller.press('c') # 模拟按下一个按键
+    pynput.keyboard.Controller.release('c') # 模拟抬起一个按键
+# 模拟按下按键1、按下按键2、抬起按键2、抬起按键1
+
+pynput.mouse.press(pynput.mouse.Button.left) # 模拟按下一个鼠标键
+pynput.mouse.release(pynput.mouse.Button.left) # 模拟抬起一个鼠标键
+\end{verbatim}
+
+\subsection{程序结构}
+\begin{itemize}
+\item
+    start.py（MacOS 启动器）
+\item
+    main.py（主程序）
+\item
+    globe.py（全局变量）
+\item
+    gui.py（tkinter GUI）
+\item
+    widget.py（tkinter 自定义组件）
+\item
+    workspace.py（工作路径处理）
+\item
+    util.py（杂项，字符串处理函数）
+\item
+    edit\_scroll\_process.py（获取路径下的全部svg）
+\item
+    blueprint.py（蓝图）
+\item
+    inkscape\_control.py（inkscape控制）
+\item
+    paste.py（快捷键监听：自动复制代码片段和vim输入框功能）
+\end{itemize}
+
+\subsubsection{全局变量}
+
+全局变量是通过globe模块中Globe类的属性来实现的。
+
+\begin{itemize}
+\item
+  ui是一个利用字典构建的树结构。Tkinter组织界面元素的方式不便于动态修改（\texttt{mainloop()}后会丢失对组件的引用，而且难以再找到），而ui可以提供可读性更好引用，避免在初始化GUI时使用大量的回调函数。使用方式：\texttt{ui{[}\textquotesingle{}button\textquotesingle{}{]}{[}\textquotesingle{}edit\textquotesingle{}{]}}会返回功能是``编辑''的按钮的引用。
+\item
+  workspace是一个记录工作路径和子文件夹（如figures文件夹）的字典。
+\item
+  blueprint是当前正在使用的蓝图。
+\item
+  system是表示操作系统的常量。
+\end{itemize}
+
+\subsubsection{工作路径}
+
+MacOS中需要切换Python工作路径才能正常读取文件。在workspace模块中提供了设置工作路径\texttt{cwd}、生成子文件夹（如figures文件夹）\texttt{sub}以及历史工作路径的处理相关的函数。每次启动程序时，会自动恢复上次设定的工作路径。初始设置的工作路径是程序所在的文件夹。
+
+\subsubsection{字符串处理函数}
+
+util.StrUtils类提供了一些字符串处理方法，包括检查合法性\texttt{rmOperand}（去除LaTeX控制字符）、转换为标题格式\texttt{caption}、转换为标签格式\texttt{label}，转换为文件名格式\texttt{fileName}。
+
+\subsubsection{和Inkscape的协调}
+
+在inkscape\_control模块中实现。
+
+在加载此模块时，将一个空白的SVG模板复制到用户应用配置文件夹中（由appsdir寻找路径；方便MacOS上的读取）。
+
+需要用到Inkscape进行绘图时，首先判断是新建SVG还是编辑SVG。如果是新建，则复制SVG模板到工作路径下的figures子文件夹，并将指定的字符串转换为文件名格式用来命名，再打开。如果是编辑，直接打开。
+
+打开SVG的函数使用到Python自带的多进程模块，在另一个进程（称作I进程）中打开，主进程的GUI依旧可以响应。由于MacOS上的进程线程机制，这里不能使用线程。在I进程中，首先启动一个子进程，并用\texttt{wait}方法等待其结束，在其中打开inkscape的GUI界面，可以绘图。当关闭这个GUI界面时，I进程继续执行，启动另一个子进程，将SVG文件转换为PDF和PDF\_TEX文件，用于插入LaTeX中。之后，I进程结束，完成整个和inkscape协调的流程。
+
+\subsubsection{自动复制代码片段}
+
+在paste模块中实现。
+
+先注册一个键盘快捷键的监听器（使用keyboard或pynput），在捕捉到键盘事件后，调用\texttt{on\_activate}函数。此时用户已经选中了一个字符串，模拟按下Ctrl/Cmd+C，将这个字符串复制到剪贴板。复制到剪贴板的模拟键盘按下操作不是在同一个进程内执行的，因此需要设定一个短暂的延时以确保在复制到剪贴板的操作已经结束后，下面的程序才会继续执行。之后读取剪贴板中的内容，并用当前蓝图的方法获取代码片段，写入剪贴板，并用一段延时保证以上操作正常结束。这时，模拟按下Ctrl/Cmd+V将剪贴板的内容粘贴到选中位置，实现了将选中的字符串自动扩展成对应代码片段的操作。在一段延时后，在MacOS上，通过复制空字符串实现剪贴板清空的操作。最后调用和Inkscape协调的函数，可以实现快速创建/编辑SVG。
+
+\subsubsection{Vim输入窗口}
+在paste模块中实现。
+
+同样地，先注册快捷键的监听器，回调函数是\texttt{open\_vim}函数。利用自带的tempflie模块创建一个临时TEX文件，并写入用于标注LaTeX公式的"\$\$"。之后在\texttt{open\_editor}函数中用gVim编辑这个文件。编辑结束后，读取文件内容并写入到剪贴板，模拟按下鼠标左键使焦点回到Inkscape界面，再模拟按下文本框工具的快捷键（MacOS上是t，Windows上是F8，再此之前，MacOS还需要模拟按下Esc使Inkscape退出其他工具），接着模拟按下鼠标左键创建文本框，再按下Ctrl/Cmd+V将剪贴板的内容粘贴到文本框中，实现在inkscape外部用vim辅助输入文本。最后，清除临时TEX文件。
+
+\subsubsection{TinyTex}
+在paste模块中实现。
+
+tiny\_tex的实现是基于Vim输入窗口。会利用tempfile生成一个完整的临时TEX文件，写入预制的导言区内容，之后在Vim输入窗口中打开它，关闭后，文件内容会写入到剪贴板，之后销毁临时文件。
+
+\section{Windows测试部署}
+
+Windows上使用PyInstaller进行了打包，而MacOS则需要使用start.py做启动器。Windows上的测试部署过程如下。
+
+\subsection{安装第三方软件}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+    安装Inkscape，\textbf{仅兼容1.0+版本}。典型安装即可。
+\item
+    安装Vim，其中图形化界面gVim是必需的。典型安装即可。
+\end{enumerate}
+
+在北大网盘上提供了安装包链接。
+
+64位 Inkscape
+1.0：
+
+https://disk.pku.edu.cn:443/link/9B21ED1C95639B9424186456A21A48AA，有效期限：2020-10-01
+23:59
+
+32位 Inkscape 1.0:
+
+https://disk.pku.edu.cn:443/link/477334A3B1C8518E9497DF4A69A2FF77，有效期限：2020-10-01
+23:59
+
+通用 gVim:
+
+https://disk.pku.edu.cn:443/link/81E4EDF2F9230A544650F928C0296F45，有效期限：2020-10-01
+23:59
+
+\subsection{设置环境变量}
+
+环境变量设置方法请参看：百度经验 - 添加环境变量：
+
+https://jingyan.baidu.com/article/47a29f24610740c0142399ea.html
+
+找到Inkscape和Vim的安装路径（在/ProgramFiles或/ProgramFiles(x86)文件夹下），并：
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+    将Inkscape安装路径文件夹中\textbf{/bin}文件夹的路径添加到用户环境变量的\textbf{PATH}中
+
+    \textbf{路径示例}：C:\textbackslash Program
+    Files\textbackslash Inkscape\textbackslash bin
+\item
+    将Vim安装路径文件夹添加到用户环境变量的\textbf{PATH}中
+
+    \textbf{路径示例}：C:\textbackslash Program
+    Files(x86)\textbackslash Vim
+\end{enumerate}
+
+环境变量生效可能需要重启程序或者\textbf{重启计算机}。
+
+\subsection{运行程序}
+
+主程序main.exe，无需安装。为了便于查看调试信息，这个版本中保留了命令行窗口。
+\section{Mac测试部署}%
+
+见在线安装指南:
+
+http://39.107.57.131/?p=568
+\section{蓝图}
+
+``蓝图''指的是软件中使用的模板系统。这一系统增加了软件的可扩展性。
+
+蓝图是整个程序操作流程的抽象。一段LaTeX代码中可能用到一些第三方宏包中的指令或自定义的指令，因此\textbf{代码片段}和\textbf{导言区中第三方宏包及自定义指令的声明}应该是一体化的。同时，对于一个代码片段，其中一部分内容是预制的，其中一部分是在使用过程中随用随填的\textbf{变量}，这些变量需要经过一定的\textbf{处理}才能呈现在\textbf{最终插入TEX文件的代码}中。我们也希望能以这些变量为参数\textbf{执行一段程序}，比如编辑同名的SVG。基于以上几点，我们设计了``蓝图''。由于其复杂性较高，目前暂未实现全部的功能设想，但预留了相关接口。
+
+\subsection{变量的处理}
+
+一个代码模板好比是一个填空题，大部分的代码都是预设好的，\textbf{但是里面有几处是可变的，可以由用户自己填写内容}。比如插入一个SVG图片的代码片段，\textbackslash end\{figure\}就属于预设好的内容，无需改动，而\textbackslash label\{fig:your-fig-label\}中的your-fig-label就是可变的，可自定义的，\textbf{可以随使用指定}。我们的片段中还有几处这样的空位，比如\textbackslash incfig\{your-fig-file\}，\textbackslash caption\{your-caption\}，your-fig-title和your-caption都是可以自己指定的。
+
+但这三处内容（your-fig-label，your-fig-file，your-caption）具有相关性，它们的值可能是同一个量的不同变化形式。比如我指定SVG图片的名称叫做叫做\texttt{test?\ fig}，图片的标签应该写成\texttt{test?-fig}，而文件名中不许出现问号所以要变成\texttt{test-fig}，而标题的首字母要大写，应该写成\texttt{Test?\ fig}。这三个量都是同一个量的变体。我们把每一个这样的变体叫做\textbf{factor}，把原来的那个量称作\textbf{variable}，从一个variable到一个factor需要一种转换操作。
+
+目前的模板里只有一个variable，就是\texttt{name}，我们图片的名字。但假如说我们在不同的地方想要设置不同的浮动体位置，那么\textbackslash begin\{figure\}{[}\textbf{ht}{]}里的\textbf{ht}也应该变成一个variable，因此\textbf{预留了多个variable的可能}。目前的GUI只能使用一个variable，但目前的代码实现可以兼容多个variable的处理。
+
+蓝图对象的variable属性是一个元组（因为集合不能转换成json，所以只好用元组），用来表明在这个对象的代码模板snippet里需要用到哪几个variable，元组中每个元素的值就是这个variable的名字。目前有且只能有一个variable，所以默认的蓝图中这个属性中只有一个元素，其值为\texttt{(\textquotesingle{}name\textquotesingle{},)}
+
+蓝图对象的factor属性是一个字典，用来表明在这个对象的代码模板snippet中使用到的、\textbf{需要用variable替换的}这些空位。字典的键表示这个factor的名称，而字典的值是一个元组，第0位表示转换成这个factor，\textbf{需要什么转换操作}，而第1位则是说明这个factor是\textbf{由哪个variable转换而来}的。
+
+\begin{verbatim}
+{
+    'caption': ('$caption', 'name'),
+    'fileName': ('$fileName', 'name'),
+    'label': ('$label', 'name')
+}
+\end{verbatim}
+
+其中第一个键值对表示\texttt{caption}这个factor是：由\texttt{name}这个variable，经过一个叫做\texttt{caption}的内置操作转化而来的。如果从variable到factor不需要任何格式转换，第0位设为空字符串即可。
+
+\subsection{代码片段的处理}
+
+\textbf{snippet}就是一个\textbf{代码的模板}，像这样：
+
+\begin{verbatim}
+\begin{figure}[ht]
+    \centering
+    \incfig{ {{fileName}} }
+    \caption{ {{caption}} }
+    \label{fig:{{label}} }
+\end{figure}
+\end{verbatim}
+
+这里用\texttt{\{\{}和\texttt{\}\}}包裹的部分就是上面提到的factor，\textbf{需要填充的位置}。因此，蓝图对象的snippet属性是\textbf{符合latex语法的字符串}，同时包含\textbf{用于字符串替换（填充factor）}的部分。经过字符串替换（填充factor）的过程得到的结果称作\textbf{fragment}，也就是如下样式的内容：
+
+\begin{verbatim}
+\begin{figure}[ht]
+    \centering
+    \incfig{my-fig}
+    \caption{My? fig}
+    \label{fig:my?-fig}
+\end{figure}    
+\end{verbatim}
+
+这一个fragment就是\textbf{可以直接插入tex文件}的代码片段。因为fragment是根据variable、factor、snippet直接生成的，所以没有对应的属性。
+
+\textbf{dependency}是snippet中使用到的第三方宏包的声明（\textbackslash usepackage）和自定义指令的定义（\textbackslash newcommand），是\textbf{加入tex导言区}的部分。dependency是依附于snippet存在的。加载一个蓝图时，dependency的内容会显示在下方的文本框内。
+
+\subsection{第三方程序的处理}
+
+当我们根据变量variable生成了一段tex代码以后，可能还希望能以这些变量为参数\textbf{执行一段第三方程序}，比如根据我之前的输入，创建一个svg图片并在inkscape里打开\ldots\ldots 这一系列操作叫做\textbf{macro}。macro属性的值就是你要执行的函数名称，默认是\texttt{\$inkscape}，将传入的参数视为SVG的名称，用inkscape打开。如果不需要执行任何macro，将这一属性设成空字符串即可。
+
+\subsection{蓝图的代码实现}
+
+蓝图类Blueprint有三个方法：get\emph{factor，get}fragment，do\_macro。
+
+这三个方法的参数完全一致，是一个解包的字典，每一个键就是\textbf{variable的名称}，对应的值就是\textbf{variable的值}。由于在目前未实现多variable，因此这个字典\textbf{只能包含一个键值对}。使用字典是为了向后兼容。
+
+get\_factor方法返回所有的factor，是一个字典，键是factor名，值是对应factor的值，即经过处理的变量variable。
+
+get\_fragment方法返回fragment字符串，一段\textbf{可以直接插入tex文件的代码片段}。
+
+do\_macro方法没有返回值，在里面调用macro函数，\textbf{执行第三方程序}。
+
+\subsection{内部函数和外部函数}
+
+为了方便导入导出，蓝图中存储的是\textbf{函数名}，而非\textbf{函数的引用}。blueprint模块中的FacMethod和Macro两个类分别实现了从\textbf{函数名字符串}获取\textbf{变量处理方法}（将variable转换成factor）和\textbf{第三方程序控制函数}（macro）的功能。
+
+程序内置了一些\textbf{处理变量的方法}（util.StrUtils）以及\textbf{控制inkscape的函数}（在inkscape\_control模块下的各个函数），使用这些内置方法/函数时，相应的方法/函数名前需要加'\$'符号。比如：\texttt{\$caption}表示转换为标题的内置字符串处理方法，\texttt{\$inkscape}表示控制inkscape的内置函数。
+
+所有不加``\$''的函数名字符串会被视作外部函数。调用外部函数/方法，即\textbf{加载第三方Python脚本}的功能涉及到更复杂的接口设计，暂未实现，但已经预留了相关的接口。
+
+\subsection{蓝图的导入和导出}
+
+蓝图\textbf{可以自定义}。在“文件”命令菜单中，可以导入和导出当前使用的蓝图。
+
+但是JSON的可读性比较差，直接编辑是不方便的。由于蓝图的接口比较复杂，暂时未实现在GUI中编辑蓝图。建议使用随附的蓝图：
+
+\begin{enumerate}
+    \item[default] 默认加载的蓝图，仅允许浮动体在原位或顶端
+    \item[bottom] 仅允许浮动体在原位或底端
+    \item[norestriction] 仅允许浮动体在原位或顶端，并解除浮动体数目限制
+    \item[float] 仅允许浮动体在顶端、底端或单独成页。LaTeX的默认值。
+    \item[captionfirst] 仅允许浮动体在原位或顶端，标题在图片之前。 
+\end{enumerate}
+
+\section{贡献}
+
+\subsection{王奕轩负责的部分}
+\begin{itemize}
+    \item 重构代码（调整模块及函数编排）
+    \item workspace模块
+    \item 导出pdf\_tex和inkscape进程
+    \item paste模块在Windows上的实现
+    \item blueprint模块
+\end{itemize}
+
+\subsection{温刚负责的部分}%
+
+\begin{itemize}
+	\item Gui的初步类和各个组件实现
+
+	\item  paste模块
+
+	\item 激活inkscape和vim
+
+	\item 扩展inkscape方向的功能
+
+	\item 构建MacOS软件安装和启动器start.py 
+\end{itemize}
+\section{评价与总结}
+
+\subsection{跨平台开发}
+
+跨平台开发是困难重重的。MacOS和Windows处理线程、文件读写的方式存在差异，第三方软件和第三方Python包对不同平台的支持也不同，而Python自带的包跨平台适配优良。
+
+跨平台代码的理想状态是在代码中不出现任何\texttt{platform.system()} 的分支结构，那样的代码可读性很差。除了处理键盘事件部分，我们基本做到了这一点。
+
+\subsection{GUI}
+
+Tkinter生成图形界面较为方便，但它在界面元素的组织上较差。为此，我们使用了树结构存储元素的引用，可以减少回调函数数量和传递的参数数量，动态调整GUI更加快捷。
+
+\subsection{剪贴板的利用}
+
+利用剪贴板可以较好地完成不同程序之间的配合，基于此，自动复制功能可以在两个平台的任意文本编辑器中实现。
+
+\subsection{全局变量的引用}%
+
+原先采用的是函数式全局变量在模块之间的相互引用,这是没有用一个字典模块globe.py来存储简便稳定的.
+
+\subsection{跨平台打包}%
+
+几乎是不可能完成的任务,在MacOS上还有各种奇奇怪怪的错误,时间紧迫就使用了自写启动器的方法.
+
+\section{鸣谢}%
+
+已经毕业的唐仁于学长给予了Mac上程序开发的经验;
+
+Pierre Glaser 在github上的项目给了我们初始的动力,他将Gilles Castel在
+
+https://github.com/gillescastel/inkscape-figures的ubuntu系统的项目迁移到了 MacOS上(见相应的pull request,现在已经merge) ,他慷慨的参与了我们第一轮的debug并给予了部分启示.
+
+\section{我们的项目主页}%
+
+https://github.com/pkumath/datastructure
+
+欢迎提出issue和pull request.
+
+或者致邮联系
+
+\section{其他问题}%
+
+如果您使用了老版的inkscape,例如0.92版本on mac,请放心,新版本的inkscape(我们的软件强烈建议您使用1.0版本而不是1.1) 不再基于X11设计,和老版的inkscape完美共存.
+
+如果您想继续使用X11来控制inkscape,建议您换成xterm而不是macvim.在MacOS上,您只需要把/Applications/project文件夹中的paste.py文件做相关修改即可.这里提供一份支持中文显示的xterm配置:
+
+\begin{verbatim}
+	XTerm*preeditType: Root
+XTerm*cursorColor: OliveDrab1
+XTerm*background: black
+XTerm*foreground: AntiqueWhite1
+XTerm*font: -misc-fixed-medium-r-normal-*-18-120-100-100-c-90-iso10646-1
+XTerm*wideFont: -misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1
+xterm*faceNameDoublesize: -misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1
+XTerm*scrollBar:true
+XTerm*rightScrollBar:true
+XTerm*inputMethod:fcitx
+xterm*VT100.Translations: #override \
+                 Ctrl Shift <Key>V:    insert-selection(CLIPBOARD) \n\
+                 Ctrl Shift <Key>C:    copy-selection(CLIPBOARD)
+XTerm*SaveLines: 4096
+\end{verbatim}
+如果缺少字体,请自行下载必要字体.mac端将能正常显示中文.如果您的中文无法正常显示,考虑修改配置如上.修改方法是在主目录下创建.Xresources并在其中输入以上内容,保存之后在命令行输入
+\begin{verbatim}
+	xrdb ~/.Xresources 
+\end{verbatim}
+
+然后重启X11.
+另外,X11的偏好设置需要如下:
+\begin{figure}[H]
+    \centering
+    \incfig{烦人的x11}
+    \caption{烦人的X11}
+    \label{fig:烦人的x11}
+\end{figure}
+\end{document}
