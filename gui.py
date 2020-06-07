@@ -2,10 +2,13 @@ import tkinter as tk
 from tkinter import filedialog as tkfiledialog
 from tkinter import messagebox as tkmessagebox
 from pathlib import Path
+import sys
 import pyperclip
+from multiprocessing import Process
 import threading
+import webbrowser
 import os
-
+from appdirs import *
 import logging as log
 
 import inkscape_control
@@ -16,6 +19,18 @@ import  edit_scroll_process as svg_file
 import workspace
 from blueprint import show_blueprint, export_blueprint, import_blueprint
 from util import StrUtil as strutil
+
+user_dir = Path(user_config_dir("project", "ww"))
+#用于存放数据文件
+if not user_dir.is_dir():
+    user_dir.mkdir(parents=True)
+
+data_dir = Path(user_data_dir('project','ww'))
+#用于存放数据
+if not data_dir.is_dir():
+    user_dir.mkdir(parents=True)
+
+flag_path = data_dir / 'flag.txt'
 
 def init():
     # Root
@@ -29,13 +44,14 @@ def init():
 
     varr_snippet = tk.StringVar()
     varr_dependency = tk.StringVar()
+    varr_workpath = tk.StringVar()
 
     varr_snippet.set('经过处理的图片文件名:'+var_snippet.get())
 
     # Hint
     hint_variable = '图片名称'
     hint_snippet = ' 提示:这是一个自制的简易LaTeX模版生成程序,我们将持续加入其他模版作为扩展,这是在macOS下制作的,我本人不是很清楚Menu组件和Windows显示的是否一致.\n众所周知的是,原来课本上的menu写法只在Windows上生效,因为Mac里的menu是显示在屏幕最上方而不是窗口里面的.\n如果您没有成功显示,换一个电脑,或者忽略格式错误.\n'+\
-'**********************************************************************************\n下方浅黄色区域时就是您的工作区域.\n请输入...'
+'**********************************************************************************\n下方浅黄色区域时就是您的工作区域.\n请输入...\n欲获取详细信息，请查看菜单栏的"使用说明"'
     hint_dependency = '这里是上面模版所需的LaTeX依赖展示区.是需要被放入导言区的内容.'
 
     # Field
@@ -55,6 +71,11 @@ def init():
 
     label_variable = tk.Label(root, textvariable = varr_snippet) 
     label_variable.place(relx = 0.5, rely = 0.1,anchor = tk.CENTER)
+
+    warning = '请注意，工作路径须与tex文件保持一致。\n如果要修改工作路径，请在菜单栏当中选取"切换工作路径"。'
+    varr_workpath.set('当前工作路径：'+os.getcwd()+'.'+warning)
+    label_workpath = widget.auto_label(root,varr_workpath)
+    label_workpath.place(relx=0.5, rely=0.98, anchor=tk.CENTER)
 
     # Button
 
@@ -94,6 +115,8 @@ def init():
     menu_help = tk.Menu(menubar, tearoff = False)
     menu_help.add_command(label = '关于...',command = lambda : menu_callback('about',field_snippet,var_snippet,varr_snippet,field_list))
     menu_help.add_command(label = '使用说明',command = lambda : menu_callback('hint',field_snippet,var_snippet,varr_snippet,field_list))
+    menu_help.add_command(label='获取教学视频',
+                          command=lambda: menu_callback('video', field_snippet, var_snippet, varr_snippet, field_list))
 
     menubar.add_cascade(label = '文件',menu = menu_file)
     menubar.add_cascade(label = '帮助', menu = menu_help)
@@ -132,7 +155,9 @@ def init():
             "help": menu_help,
         }
     }
-
+    field_list.auto_check()
+    label_workpath.auto_check(varr_workpath,warning)
+    # check_inkscape()
     log.info("GUI initiated")
 
     show_blueprint() #显示默认蓝图
@@ -171,19 +196,32 @@ def menu_callback(command,widget,var,varr,listbox):
     """
     if command == 'about':
         tkmessagebox.showinfo('Help',message= '这是一个latex模版生成程序.\n 温刚于5.10最后一次修改, 1800011095,\n school of mathematics, Peking University.\n 王奕轩, 1900014136, department of chinese, Peking University.')
-        listbox.update()
+        # listbox.update()
     elif command == 'hint':
         tkmessagebox.showinfo('Hint',message = '图片标题的处理是为了防止不合法的标题,所以不建议或者未开放关闭自动处理功能.')
-        listbox.update()
+        with open(str(flag_path), 'r') as f:
+            manual_state = f.read()
+            if 'Browser' in manual_state:
+                sys.path.append("libs")
+                url = 'http://39.107.57.131/?p=605'
+                webbrowser.open(url)
+                listbox.update()
+            elif 'True' in manual_state:
+                print('here!')
+                os.system('open ' + str(data_dir/'manual.pdf').replace(' ', '\ '))
     elif command == 'save':
         widget.save_file_as(None,varr)
-        listbox.update()
+        # listbox.update()
     elif command == 'open':
         widget.open_file(None,None,var,varr)
-        listbox.update()
+        # listbox.update()
     elif command == 'cwd':
         cwd_select()
-        listbox.update()
+        # listbox.update()
+    elif command == 'video':
+        sys.path.append("libs")
+        url = 'http://39.107.57.131/?p=593'
+        webbrowser.open(url)
 
 def cwd_select():
         """cwd_select

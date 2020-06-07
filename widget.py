@@ -197,7 +197,7 @@ class make_list(tk.Frame):
         #删除选中的选项
         b1 = tk.Button(self, text="删除此文件", command=lambda : self.delete(self.list[self.lb.curselection()[0]]))
         b1.place(rely = 0.9,relx = 0.25)
-        b2 = tk.Button(self, text="更新文件列表", command=lambda: self.update())
+        b2 = tk.Button(self, text="强制更新文件列表", command=lambda: self.update())
         b2.place(rely=0.95, relx=0.25)
 
     def delete(self,filename):
@@ -224,6 +224,18 @@ class make_list(tk.Frame):
         print(self.list[self.lb.curselection()[0]])
         print(self.list[self.lb.curselection()[0]][:-4])
         return self.list[self.lb.curselection()[0]][:-4]
+
+    def auto_check(self):
+        self.update()
+        self.after(100, self.auto_check)
+
+class auto_label(tk.Label):
+    def __init__(self,root,varr):
+        tk.Label.__init__(self,root, textvariable=varr)
+
+    def auto_check(self,varr,warning):
+        varr.set('当前工作路径：' + os.getcwd() + '.' + warning)
+        self.after(100, lambda : self.auto_check(varr,warning))
 
 
 

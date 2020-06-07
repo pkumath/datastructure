@@ -40,13 +40,19 @@ def readme2(setup_path):
     if software_path.exists():
         print('系统检测到您完成了安装。')
         if flag_path.exists():
-            print('系统检测到您已经读过使用手册。若要再次阅读，请手动打开软件目录下的manual.pdf.')
+            print('系统检测到您已经读过使用手册。若要再次阅读，请手动打开软件目录下的manual.pdf，或者打开菜单栏中的：帮助.')
             pass
         else:
             os.system('open '+f'{manual_path}')
-            f = open(flag_path,'w')
-            f.write('True')
-            f.close()
+            try:
+                os.system('cp -r '+ f'{manual_path}' +' '+ str(data_dir).replace(' ','\ '))
+                f = open(flag_path,'w')
+                f.write('True')
+                f.close()
+            except:
+                f = open(flag_path, 'w')
+                f.write('Browser')
+                f.close()
     else:
         log.warning('系统检测到软件没有被安装到/Applications.请阅读说明文件并检查！')
 
