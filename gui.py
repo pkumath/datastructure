@@ -34,6 +34,13 @@ flag_path = data_dir / 'flag.txt'
 
 def init():
     # Root
+    if flag_path.exists():
+        pass
+    else:
+        f = open(flag_path, 'w')
+        f.write('Browser')
+        f.close()
+
     root = tk.Tk()
     root.title('LaTeX模版生成程序')
     root.geometry('700x800')
