@@ -218,7 +218,7 @@ class make_list(tk.Frame):
         now_files = svg_file.get_svgnames(os.getcwd())
         self.list = now_files
         self.path = os.getcwd() +os.path.sep + 'figures'
-        self.filename.set(tuple(now_files))
+        self.filename.set(tuple(sorted(now_files)))
 
     def content(self):
         print(self.list[self.lb.curselection()[0]])
