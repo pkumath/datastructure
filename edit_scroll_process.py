@@ -12,4 +12,4 @@ def get_svgnames(path):
     for i in all_file:
         if list(i.split('.'))[-1] == 'svg':
             svg_file.append(i)
-    return svg_file
+    return sorted(svg_file)

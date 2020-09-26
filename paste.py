@@ -5,6 +5,7 @@ import pyperclip as pyperclip
 import time
 import subprocess
 import tempfile
+import shutil
 
 import os
 
@@ -169,6 +170,7 @@ def open_tiny_latex():
     #     keyboard.send("ctrl+v")
 
     os.remove(f.name)
+    shutil.rmtree(os.path.dirname(f.name) + os.path.sep + 'figures')
 
 def on_activate():
     log.info('Global hotkey activated')
@@ -186,6 +188,8 @@ def on_activate():
     time.sleep(0.5)
 
     variable = pyperclip.paste()
+    if variable == '':
+        variable = 'untitled'
     fragment = globe.blueprint.get_fragment(**{'name': variable})
     pyperclip.copy(fragment)
 
