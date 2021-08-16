@@ -1,8 +1,8 @@
 # LaTex代码模版管理器1.0.[数据结构与算法,wg,wyx]
 
-在线安装指南请见:http://39.107.57.131/?p=568
+在线安装指南请见:http://39.107.57.131/?p=568(我没钱了,这个网站暂时不开)
 
-在线安装和初级教学视频见:http://39.107.57.131/?p=593.
+在线安装和初级教学视频见:https://www.bilibili.com/video/BV1CC4y1p7pg.(直接用网盘下载吧)
 如果加载过慢请从网盘下载
 
 链接: https://pan.baidu.com/s/1nunaRNsVQZz5Kk1zUYdUkA  密码: hkmd
