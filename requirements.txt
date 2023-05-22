@@ -3,4 +3,4 @@ mouse==0.7.1;platform_system=="Windows"
 pynput==1.6.8;platform_system=="Darwin"
 appdirs==1.4.3
 pyperclip==1.8.0
-requests==2.23.0
+requests==2.31.0
